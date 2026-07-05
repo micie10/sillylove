@@ -246,7 +246,7 @@ body {
 .post-card::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 .post-card h3 { margin: 4px 0 8px; font-family: var(--font-display); font-weight: normal; }
 .post-date { margin: 0; font-family: var(--font-hand); color: var(--accent-deep); }
-.post-card p:last-child { margin: 0; line-height: 1.6; }
+.post-card .post-content { margin: 0; line-height: 1.6; }
 
 /* ---- 추가 버튼 (post / gallery 공통) ---- */
 .add-btn {
@@ -903,13 +903,13 @@ body:not(.is-admin) img.editable-img { cursor: default; }
           <article class="post-card">
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.05</p>
             <h3 contenteditable="true" spellcheck="false">첫 글의 제목</h3>
-            <p contenteditable="true" spellcheck="false">여기에 새 글의 내용을 적어보세요. 이 사이트는 개인 백업용이라
-            편하게 마음대로 채워도 괜찮습니다.</p>
+            <div class="post-content" contenteditable="true" spellcheck="false">여기에 새 글의 내용을 적어보세요. 이 사이트는 개인 백업용이라
+            편하게 마음대로 채워도 괜찮습니다.</div>
           </article>
           <article class="post-card">
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.01</p>
             <h3 contenteditable="true" spellcheck="false">또 다른 기록</h3>
-            <p contenteditable="true" spellcheck="false">날짜와 제목, 내용만 복사해서 원하는 만큼 카드를 늘려 쓰세요.</p>
+            <div class="post-content" contenteditable="true" spellcheck="false">날짜와 제목, 내용만 복사해서 원하는 만큼 카드를 늘려 쓰세요.</div>
           </article>
         </div>
       </section>
@@ -1477,7 +1477,7 @@ document.addEventListener('DOMContentLoaded', () => {
     article.innerHTML = `
       <p class="post-date" contenteditable="true" spellcheck="false">${dateStr}</p>
       <h3 contenteditable="true" spellcheck="false">새 글 제목</h3>
-      <p contenteditable="true" spellcheck="false">내용을 입력해보세요.</p>
+      <div class="post-content" contenteditable="true" spellcheck="false">내용을 입력해보세요.</div>
     `;
     postList.prepend(article);
     scheduleAutoSave();
@@ -1500,7 +1500,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function openPostDetail(card) {
     postDetailDate.innerHTML = card.querySelector('.post-date').innerHTML;
     postDetailTitle.innerHTML = card.querySelector('h3').innerHTML;
-    postDetailContent.innerHTML = card.querySelector('p:last-child').innerHTML;
+    postDetailContent.innerHTML = card.querySelector('.post-content').innerHTML;
     postDetailBackdrop.classList.add('visible');
   }
   function closePostDetail() { postDetailBackdrop.classList.remove('visible'); }
@@ -1683,7 +1683,7 @@ document.addEventListener('DOMContentLoaded', () => {
       data.posts.push({
         date: card.querySelector('.post-date').innerHTML,
         title: card.querySelector('h3').innerHTML,
-        content: card.querySelector('p:last-child').innerHTML,
+        content: card.querySelector('.post-content').innerHTML,
       });
     });
 
@@ -1733,7 +1733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         article.innerHTML = `
           <p class="post-date" contenteditable="true" spellcheck="false">${p.date}</p>
           <h3 contenteditable="true" spellcheck="false">${p.title}</h3>
-          <p contenteditable="true" spellcheck="false">${p.content}</p>
+          <div class="post-content" contenteditable="true" spellcheck="false">${p.content}</div>
         `;
         postList.appendChild(article);
       });
