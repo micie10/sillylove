@@ -451,10 +451,13 @@ body {
   font-family: var(--font-hand);
   font-size: 1rem;
 }
+.memo-empty[hidden] { display: none; }
 
 .memo-card {
   position: relative;
   height: 190px;
+  min-height: 0;
+  max-height: 190px;
   border-radius: 4px;
   padding: 22px 14px 14px;
   box-sizing: border-box;
