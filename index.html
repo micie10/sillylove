@@ -234,7 +234,16 @@ body {
   background: var(--accent-soft);
   border-radius: 18px;
   padding: 18px 22px;
+  height: 190px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  cursor: pointer;
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* 구형 Edge/IE */
 }
+.post-card::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 .post-card h3 { margin: 4px 0 8px; font-family: var(--font-display); font-weight: normal; }
 .post-date { margin: 0; font-family: var(--font-hand); color: var(--accent-deep); }
 .post-card p:last-child { margin: 0; line-height: 1.6; }
@@ -767,6 +776,47 @@ body:not(.is-admin) img.editable-img { cursor: default; }
   min-height: 1em;
 }
 
+/* ---- 글 상세 보기 모달 ---- */
+.post-detail-modal {
+  background: var(--card-bg);
+  padding: 32px 30px 26px;
+  border-radius: 24px;
+  width: min(560px, 100%);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px -12px rgba(0,0,0,0.4);
+}
+.post-detail-modal .post-date {
+  font-family: var(--font-hand);
+  color: var(--accent-deep);
+  margin: 0 0 6px;
+}
+.post-detail-modal h3 {
+  font-family: var(--font-display);
+  font-weight: normal;
+  font-size: 1.3rem;
+  margin: 0 0 14px;
+  color: var(--ink);
+}
+.post-detail-modal .post-detail-content {
+  line-height: 1.7;
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+.post-detail-close {
+  display: block;
+  margin: 20px 0 0 auto;
+  border: none;
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.post-detail-close:hover { background: var(--accent-deep); color: #fff; }
+
 /* ============================================
    반응형
    ============================================ */
@@ -1090,6 +1140,16 @@ body:not(.is-admin) img.editable-img { cursor: default; }
       <button type="button" class="secondary" id="gistCancel">취소</button>
       <button type="button" class="primary" id="gistSave">저장</button>
     </div>
+  </div>
+</div>
+
+<!-- 글 상세 보기 모달 -->
+<div class="simple-modal-backdrop" id="postDetailBackdrop">
+  <div class="post-detail-modal">
+    <p class="post-date" id="postDetailDate"></p>
+    <h3 id="postDetailTitle"></h3>
+    <div class="post-detail-content" id="postDetailContent"></div>
+    <button type="button" class="post-detail-close" id="postDetailClose">닫기</button>
   </div>
 </div>
 
@@ -1431,6 +1491,32 @@ document.addEventListener('DOMContentLoaded', () => {
     title.focus();
   });
 
+  /* ---- post 박스 클릭 시 전체 글 보기 (읽기 전용일 때만) ---- */
+  const postDetailBackdrop = document.getElementById('postDetailBackdrop');
+  const postDetailDate = document.getElementById('postDetailDate');
+  const postDetailTitle = document.getElementById('postDetailTitle');
+  const postDetailContent = document.getElementById('postDetailContent');
+
+  function openPostDetail(card) {
+    postDetailDate.innerHTML = card.querySelector('.post-date').innerHTML;
+    postDetailTitle.innerHTML = card.querySelector('h3').innerHTML;
+    postDetailContent.innerHTML = card.querySelector('p:last-child').innerHTML;
+    postDetailBackdrop.classList.add('visible');
+  }
+  function closePostDetail() { postDetailBackdrop.classList.remove('visible'); }
+
+  postList.addEventListener('click', (e) => {
+    if (isAdmin()) return; // 관리자 모드에서는 클릭 = 편집이므로 상세보기를 열지 않음
+    const sel = window.getSelection();
+    if (sel && sel.toString().length > 0) return; // 텍스트 선택 중이면 무시
+    const card = e.target.closest('.post-card');
+    if (card) openPostDetail(card);
+  });
+  document.getElementById('postDetailClose').addEventListener('click', closePostDetail);
+  postDetailBackdrop.addEventListener('click', (e) => {
+    if (e.target === postDetailBackdrop) closePostDetail();
+  });
+
   /* ============================================
      gallery: 이미지 추가
      ============================================ */
@@ -1465,12 +1551,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ⚠️ 이 코드는 정적 사이트라 진짜 보안이 아닙니다.
   // 여기 적힌 비밀번호는 누구나 파일을 열어보면 볼 수 있어요.
   // "아무나 못 건드리게 막는 정도"의 잠금장치로 생각해주세요.
-  const ADMIN_CODE = '0425'; // 원하는 비밀번호로 바꿔서 사용하세요.
+  const ADMIN_CODE = 'changeme123'; // 원하는 비밀번호로 바꿔서 사용하세요.
 
   // Gist ID는 비밀번호가 아니라 "주소"라서 파일에 그대로 적어둬도 괜찮아요.
   // 관리자 화면에서 한 번 연결하면 아래 값 대신 그 값을 써서 저장/불러오기 합니다.
   // 방문자 전체에게 항상 같은 내용을 보여주고 싶다면, 여기에 실제 Gist ID를 적어두고 다시 올리세요.
-  const DEFAULT_GIST_ID = '2fbddd550821e27cfadba157edc23eda';
+  const DEFAULT_GIST_ID = '';
 
   const LS_ADMIN = 'site_admin';
   const LS_GIST_ID = 'site_gist_id';
