@@ -231,6 +231,7 @@ body {
 }
 .post-list::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 .post-card {
+  position: relative;
   background: var(--accent-soft);
   border-radius: 18px;
   padding: 18px 22px;
@@ -244,6 +245,30 @@ body {
   -ms-overflow-style: none;   /* 구형 Edge/IE */
 }
 .post-card::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.post-card-tools {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  gap: 6px;
+  z-index: 3;
+}
+.is-admin .post-card-tools { display: flex; }
+.post-card-tools button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.12);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.post-card-tools button:hover { background: rgba(0,0,0,0.28); }
 .post-card h3 { margin: 4px 0 8px; font-family: var(--font-display); font-weight: normal; }
 .post-date { margin: 0; font-family: var(--font-hand); color: var(--accent-deep); }
 .post-card .post-content { margin: 0; line-height: 1.6; }
@@ -396,26 +421,34 @@ body {
 .memo-dot-orange { background: #fcd0a1; }
 .memo-write .add-btn { display: inline-flex; margin-bottom: 0; }
 
+.memo-board {
+  height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.memo-board::-webkit-scrollbar { display: none; }
 .memo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 20px 16px;
-  height: 420px;
-  overflow-y: auto;
-  overflow-x: hidden;
   align-content: start;
   padding: 10px 4px 10px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  min-height: 100%;
 }
-.memo-grid::-webkit-scrollbar { display: none; }
 
 .memo-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: var(--ink-soft);
   font-family: var(--font-hand);
   font-size: 1rem;
-  padding: 60px 0;
 }
 
 .memo-card {
@@ -953,6 +986,31 @@ body:not(.is-admin) img.editable-img { cursor: default; }
   margin: -6px 0 10px;
   min-height: 1em;
 }
+.field-row textarea {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: #fff;
+  box-sizing: border-box;
+  resize: vertical;
+}
+.field-row textarea:focus { outline: 2px solid var(--accent-deep); }
+.field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+.field-checkbox input { cursor: pointer; }
 
 /* ---- 글 상세 보기 모달 ---- */
 .post-detail-modal {
@@ -1079,12 +1137,20 @@ body:not(.is-admin) img.editable-img { cursor: default; }
         <button type="button" class="add-btn" id="addPostBtn"><span class="plus">＋</span> 새 글 추가</button>
         <div class="post-list" id="postList">
           <article class="post-card">
+            <div class="post-card-tools">
+              <button type="button" class="post-edit" title="수정">✎</button>
+              <button type="button" class="post-delete" title="삭제">✕</button>
+            </div>
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.05</p>
             <h3 contenteditable="true" spellcheck="false">첫 글의 제목</h3>
             <div class="post-content" contenteditable="true" spellcheck="false">여기에 새 글의 내용을 적어보세요. 이 사이트는 개인 백업용이라
             편하게 마음대로 채워도 괜찮습니다.</div>
           </article>
           <article class="post-card">
+            <div class="post-card-tools">
+              <button type="button" class="post-edit" title="수정">✎</button>
+              <button type="button" class="post-delete" title="삭제">✕</button>
+            </div>
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.01</p>
             <h3 contenteditable="true" spellcheck="false">또 다른 기록</h3>
             <div class="post-content" contenteditable="true" spellcheck="false">날짜와 제목, 내용만 복사해서 원하는 만큼 카드를 늘려 쓰세요.</div>
@@ -1095,54 +1161,6 @@ body:not(.is-admin) img.editable-img { cursor: default; }
       <!-- GALLERY -->
       <section class="panel" id="panel-gallery" hidden>
         <div class="gallery-grid" id="galleryGrid">
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZiZTRlOSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkOThmYTAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2cyKSIvPgogIDxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI5MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC4zNSIvPgogIDxyZWN0IHg9IjE3MCIgeT0iNjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjI1Ii8+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSIyMzAiIHI9IjQwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+Cg==" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjYwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2VlZjNmYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNmM5ZDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjYwIiBmaWxsPSJ1cmwoI2czKSIvPgogIDxyZWN0IHg9IjIwIiB5PSIyMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIyMjAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMyIvPgogIDxyZWN0IHg9IjIwMCIgeT0iNDAiIHdpZHRoPSIxODAiIGhlaWdodD0iOTAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuNCIvPgogIDxyZWN0IHg9IjIwMCIgeT0iMTUwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjI1Ii8+Cjwvc3ZnPgo=" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzEiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2YzlkNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMThiYTEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2cxKSIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIzNCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC41NSIvPgogIDxwYXRoIGQ9Ik00MCAxNzVjOC00MCA0MC01OCA2MC01OHM1MiAxOCA2MCA1OCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC41NSIvPgo8L3N2Zz4K" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMzAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzIiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZiZTRlOSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkOThmYTAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2cyKSIvPgogIDxyZWN0IHg9IjMwIiB5PSIzMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSI5MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC4zNSIvPgogIDxyZWN0IHg9IjE3MCIgeT0iNjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iMTgwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjI1Ii8+CiAgPGNpcmNsZSBjeD0iODAiIGN5PSIyMzAiIHI9IjQwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjMiLz4KPC9zdmc+Cg==" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMjYwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2VlZjNmYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNmM5ZDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjYwIiBmaWxsPSJ1cmwoI2czKSIvPgogIDxyZWN0IHg9IjIwIiB5PSIyMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIyMjAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuMyIvPgogIDxyZWN0IHg9IjIwMCIgeT0iNDAiIHdpZHRoPSIxODAiIGhlaWdodD0iOTAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuNCIvPgogIDxyZWN0IHg9IjIwMCIgeT0iMTUwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjI1Ii8+Cjwvc3ZnPgo=" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
-          <div class="gallery-item">
-            <div class="gallery-photo img-frame">
-              <img class="editable-img" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZzEiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2YzlkNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMThiYTEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2cxKSIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIzNCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC41NSIvPgogIDxwYXRoIGQ9Ik00MCAxNzVjOC00MCA0MC01OCA2MC01OHM1MiAxOCA2MCA1OCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC41NSIvPgo8L3N2Zz4K" alt="갤러리 이미지">
-              <div class="img-hint img-hint-move">✋</div>
-              <div class="img-hint img-hint-edit">클릭하여 변경</div>
-            </div>
-            <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
-          </div>
           <div class="gallery-add-tile" id="galleryAddTile">
             <span class="plus">＋</span>
             <span>이미지 추가</span>
@@ -1166,8 +1184,10 @@ body:not(.is-admin) img.editable-img { cursor: default; }
               <button type="button" class="add-btn" id="addMemoBtn"><span class="plus">＋</span> 메모 남기기</button>
             </div>
           </div>
-          <div class="memo-grid" id="memoGrid"></div>
-          <p class="memo-empty" id="memoEmpty" hidden>아직 메모가 없어요. 메모를 남겨보세요 📝</p>
+          <div class="memo-board">
+            <div class="memo-grid" id="memoGrid"></div>
+            <p class="memo-empty" id="memoEmpty" hidden>아직 메모가 없어요. 메모를 남겨보세요 📝</p>
+          </div>
         </div>
       </section>
 
@@ -1331,6 +1351,33 @@ body:not(.is-admin) img.editable-img { cursor: default; }
     <h3 id="postDetailTitle"></h3>
     <div class="post-detail-content" id="postDetailContent"></div>
     <button type="button" class="post-detail-close" id="postDetailClose">닫기</button>
+  </div>
+</div>
+
+<!-- 글 수정 모달 -->
+<div class="simple-modal-backdrop" id="postEditBackdrop">
+  <div class="simple-modal" style="width:min(560px,100%);">
+    <h3>글 수정</h3>
+    <div class="field-row">
+      <label>날짜</label>
+      <input type="text" id="postEditDate">
+    </div>
+    <div class="field-row">
+      <label>제목</label>
+      <input type="text" id="postEditTitle">
+    </div>
+    <div class="field-row">
+      <label>내용</label>
+      <label class="field-checkbox">
+        <input type="checkbox" id="postEditHtmlMode">
+        HTML로 입력 (태그를 직접 작성해서 넣기)
+      </label>
+      <textarea id="postEditContent" placeholder="글 내용을 입력하세요"></textarea>
+    </div>
+    <div class="simple-modal-actions">
+      <button type="button" class="secondary" id="postEditCancel">취소</button>
+      <button type="button" class="primary" id="postEditSave">저장</button>
+    </div>
   </div>
 </div>
 
@@ -1656,6 +1703,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const article = document.createElement('article');
     article.className = 'post-card';
     article.innerHTML = `
+      <div class="post-card-tools">
+        <button type="button" class="post-edit" title="수정">✎</button>
+        <button type="button" class="post-delete" title="삭제">✕</button>
+      </div>
       <p class="post-date" contenteditable="true" spellcheck="false">${dateStr}</p>
       <h3 contenteditable="true" spellcheck="false">새 글 제목</h3>
       <div class="post-content" contenteditable="true" spellcheck="false">내용을 입력해보세요.</div>
@@ -1687,7 +1738,59 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function closePostDetail() { postDetailBackdrop.classList.remove('visible'); }
 
+  /* ---- 글 수정 모달 ---- */
+  const postEditBackdrop = document.getElementById('postEditBackdrop');
+  const postEditDate = document.getElementById('postEditDate');
+  const postEditTitle = document.getElementById('postEditTitle');
+  const postEditContent = document.getElementById('postEditContent');
+  const postEditHtmlMode = document.getElementById('postEditHtmlMode');
+  let editingPostCard = null;
+
+  function openPostEdit(card) {
+    repairPostCards();
+    editingPostCard = card;
+    postEditDate.value = card.querySelector('.post-date').textContent.trim();
+    postEditTitle.value = card.querySelector('h3').textContent.trim();
+    postEditContent.value = card.querySelector('.post-content').innerHTML.trim();
+    postEditHtmlMode.checked = true; // 기존 내용은 이미 HTML 형태라 기본은 HTML 모드로
+    postEditBackdrop.classList.add('visible');
+    setTimeout(() => postEditTitle.focus(), 50);
+  }
+  function closePostEdit() {
+    postEditBackdrop.classList.remove('visible');
+    editingPostCard = null;
+  }
+  document.getElementById('postEditCancel').addEventListener('click', closePostEdit);
+  postEditBackdrop.addEventListener('click', (e) => { if (e.target === postEditBackdrop) closePostEdit(); });
+  document.getElementById('postEditSave').addEventListener('click', () => {
+    if (!editingPostCard) return;
+    editingPostCard.querySelector('.post-date').textContent = postEditDate.value;
+    editingPostCard.querySelector('h3').textContent = postEditTitle.value;
+    const contentEl = editingPostCard.querySelector('.post-content');
+    if (postEditHtmlMode.checked) {
+      contentEl.innerHTML = postEditContent.value;
+    } else {
+      // 일반 텍스트 모드: 줄바꿈만 <br>로 변환, 나머지는 그대로 이스케이프해서 넣음
+      contentEl.innerHTML = esc(postEditContent.value).replace(/\n/g, '<br>');
+    }
+    closePostEdit();
+    scheduleAutoSave();
+  });
+
   postList.addEventListener('click', (e) => {
+    const editBtn = e.target.closest('.post-edit');
+    if (editBtn) {
+      openPostEdit(editBtn.closest('.post-card'));
+      return;
+    }
+    const delBtn = e.target.closest('.post-delete');
+    if (delBtn) {
+      if (confirm('이 글을 삭제할까요?')) {
+        delBtn.closest('.post-card').remove();
+        scheduleAutoSave();
+      }
+      return;
+    }
     if (isAdmin()) return; // 관리자 모드에서는 클릭 = 편집이므로 상세보기를 열지 않음
     const sel = window.getSelection();
     if (sel && sel.toString().length > 0) return; // 텍스트 선택 중이면 무시
@@ -1927,6 +2030,16 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---- 예전 방식으로 저장돼 여러 조각으로 쪼개진 글 자동 복구 ---- */
   function repairPostCards() {
     document.querySelectorAll('#postList .post-card').forEach((card) => {
+      let toolsEl = card.querySelector('.post-card-tools');
+      if (!toolsEl) {
+        toolsEl = document.createElement('div');
+        toolsEl.className = 'post-card-tools';
+        toolsEl.innerHTML = `
+          <button type="button" class="post-edit" title="수정">✎</button>
+          <button type="button" class="post-delete" title="삭제">✕</button>
+        `;
+        card.prepend(toolsEl);
+      }
       if (card.querySelector('.post-content')) return; // 이미 정상 구조
       const dateEl = card.querySelector('.post-date');
       const titleEl = card.querySelector('h3');
@@ -1935,7 +2048,7 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv.contentEditable = 'true';
       contentDiv.spellcheck = false;
       Array.from(card.children).forEach((el) => {
-        if (el === dateEl || el === titleEl) return;
+        if (el === dateEl || el === titleEl || el === toolsEl) return;
         contentDiv.innerHTML += el.innerHTML + '<br>';
         el.remove();
       });
@@ -2012,6 +2125,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const article = document.createElement('article');
         article.className = 'post-card';
         article.innerHTML = `
+          <div class="post-card-tools">
+            <button type="button" class="post-edit" title="수정">✎</button>
+            <button type="button" class="post-delete" title="삭제">✕</button>
+          </div>
           <p class="post-date" contenteditable="true" spellcheck="false">${p.date}</p>
           <h3 contenteditable="true" spellcheck="false">${p.title}</h3>
           <div class="post-content" contenteditable="true" spellcheck="false">${p.content}</div>
