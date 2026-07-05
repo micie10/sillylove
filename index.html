@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>나의 페어 사이트</title>
+<title>SILLY LOVE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=Gaegu:wght@400;700&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;700&family=Black+Han+Sans&family=Jua&family=Poor+Story&family=Gamja+Flower&family=Hi+Melody&family=Stylish&family=Cute+Font&family=Single+Day&family=Yeon+Sung&family=East+Sea+Dokdo&family=Gowun+Batang:wght@400;700&family=Sunflower:wght@300;500;700&family=Song+Myung&display=swap" rel="stylesheet">
 <style>
@@ -340,19 +340,197 @@ body {
 .gallery-add-tile:hover { background: rgba(235, 156, 174, 0.16); border-color: var(--accent-deep); }
 .gallery-add-tile .plus { font-size: 1.8rem; line-height: 1; }
 
-/* ---- ABOUT ---- */
-.about-body h2, .settings-body h2 {
+/* ---- SETTINGS (제목 스타일 공유) ---- */
+.settings-body h2 {
   font-family: var(--font-display);
   letter-spacing: 0.08em;
   margin-top: 0;
 }
-.about-body dl {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  row-gap: 12px;
+
+/* ---- MEMO ---- */
+.memo-write {
+  display: none;
+  background: var(--accent-soft);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
 }
-.about-body dt { font-family: var(--font-hand); color: var(--accent-deep); }
-.about-body dd { margin: 0; }
+.is-admin .memo-write { display: block; }
+.memo-write textarea {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  border: 1px solid var(--accent-deep);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: #fff;
+  box-sizing: border-box;
+}
+.memo-write textarea:focus { outline: 2px solid var(--accent-deep); }
+.memo-write-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.memo-color-picker { display: flex; gap: 8px; }
+.memo-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.memo-dot.selected { border-color: var(--ink); transform: scale(1.12); }
+.memo-dot-yellow { background: #fde68a; }
+.memo-dot-green  { background: #bbf0c9; }
+.memo-dot-pink   { background: #f9c9dd; }
+.memo-dot-blue   { background: #bcdcf7; }
+.memo-dot-orange { background: #fcd0a1; }
+.memo-write .add-btn { display: inline-flex; margin-bottom: 0; }
+
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px 16px;
+  height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-content: start;
+  padding: 10px 4px 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.memo-grid::-webkit-scrollbar { display: none; }
+
+.memo-empty {
+  text-align: center;
+  color: var(--ink-soft);
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  padding: 60px 0;
+}
+
+.memo-card {
+  position: relative;
+  height: 190px;
+  border-radius: 4px;
+  padding: 22px 14px 14px;
+  box-sizing: border-box;
+  box-shadow: 3px 6px 14px -4px rgba(0,0,0,0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+}
+.memo-card:hover {
+  transform: rotate(0deg) translateY(-4px) scale(1.02);
+  box-shadow: 6px 14px 26px -6px rgba(0,0,0,0.35);
+  z-index: 2;
+}
+.memo-card::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 54px;
+  height: 22px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.55),
+    rgba(255,255,255,0.55) 3px,
+    rgba(255,255,255,0.32) 3px,
+    rgba(255,255,255,0.32) 6px
+  );
+  opacity: 0.85;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.memo-yellow { background: #fdf4b8; rotate: -2.5deg; }
+.memo-yellow::before { background-color: #f4dd7a; background-blend-mode: multiply; }
+.memo-green  { background: #d7f5df; rotate: 2deg; }
+.memo-green::before  { background-color: #9adcae; background-blend-mode: multiply; }
+.memo-pink   { background: #fbdcec; rotate: -1.5deg; }
+.memo-pink::before   { background-color: #eea8ca; background-blend-mode: multiply; }
+.memo-blue   { background: #d9ecfb; rotate: 2.5deg; }
+.memo-blue::before   { background-color: #9dc7ec; background-blend-mode: multiply; }
+.memo-orange { background: #fde3c7; rotate: -2deg; }
+.memo-orange::before { background-color: #f3ba81; background-blend-mode: multiply; }
+
+.memo-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: safe center;
+  justify-content: safe center;
+  text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.memo-text::-webkit-scrollbar { display: none; }
+
+.memo-date {
+  text-align: center;
+  margin: 8px 0 0;
+  font-family: var(--font-hand);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+
+.memo-delete {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.memo-delete:hover { background: rgba(0,0,0,0.3); }
+.is-admin .memo-delete { display: flex; align-items: center; justify-content: center; }
+
+.memo-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  box-shadow: 0 14px 30px -8px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10010;
+}
+.memo-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
 /* ---- SETTINGS ---- */
 .settings-body p { line-height: 1.6; }
@@ -827,7 +1005,7 @@ body:not(.is-admin) img.editable-img { cursor: default; }
   .grid-home { grid-template-columns: 1fr; }
   .pinned, .stamp-note { grid-column: 1 / 2; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-  .about-body dl { grid-template-columns: 1fr; }
+  .memo-grid { grid-template-columns: repeat(2, 1fr); }
   .tab { font-size: 0.95rem; }
   .tab.active { padding: 16px 14px 8px; }
 }
@@ -972,30 +1150,30 @@ body:not(.is-admin) img.editable-img { cursor: default; }
         </div>
       </section>
 
-      <!-- ABOUT -->
-      <section class="panel" id="panel-about" hidden>
-        <div class="about-body">
-          <h2>ABOUT</h2>
-          <dl>
-            <dt>이름</dt><dd contenteditable="true" spellcheck="false" data-field="about-name">이름을 적어주세요</dd>
-            <dt>한 줄 소개</dt><dd contenteditable="true" spellcheck="false" data-field="about-intro">여기에 소개를 적어보세요</dd>
-            <dt>좋아하는 것</dt><dd contenteditable="true" spellcheck="false" data-field="about-likes">좋아하는 것들을 나열해보세요</dd>
-            <dt>연락</dt><dd contenteditable="true" spellcheck="false" data-field="about-contact">@handle</dd>
-          </dl>
+      <!-- MEMO -->
+      <section class="panel" id="panel-memo" hidden>
+        <div class="memo-body">
+          <div class="memo-write">
+            <textarea id="memoInput" maxlength="500" placeholder="메모를 남겨보세요 (최대 500자)"></textarea>
+            <div class="memo-write-row">
+              <div class="memo-color-picker" id="memoColorPicker">
+                <button type="button" class="memo-dot memo-dot-yellow selected" data-color="yellow" title="노랑"></button>
+                <button type="button" class="memo-dot memo-dot-green" data-color="green" title="초록"></button>
+                <button type="button" class="memo-dot memo-dot-pink" data-color="pink" title="핑크"></button>
+                <button type="button" class="memo-dot memo-dot-blue" data-color="blue" title="파랑"></button>
+                <button type="button" class="memo-dot memo-dot-orange" data-color="orange" title="주황"></button>
+              </div>
+              <button type="button" class="add-btn" id="addMemoBtn"><span class="plus">＋</span> 메모 남기기</button>
+            </div>
+          </div>
+          <div class="memo-grid" id="memoGrid"></div>
+          <p class="memo-empty" id="memoEmpty" hidden>아직 메모가 없어요. 메모를 남겨보세요 📝</p>
         </div>
       </section>
 
-      <!-- SETTINGS -->
+      <!-- 공사 중 -->
       <section class="panel" id="panel-settings" hidden>
         <div class="settings-body">
-          <h2>SETTINGS</h2>
-          <p>이 사이트는 정적 HTML로만 되어 있어요. 이 파일 하나만 고치면
-          바로 화면에 반영됩니다.</p>
-          <ul>
-            <li>글자, 문구, 구조 → <code>&lt;body&gt;</code> 안의 텍스트</li>
-            <li>색상, 폰트, 레이아웃 → 위쪽 <code>&lt;style&gt;</code> 안의 값</li>
-            <li>사진 → <code>img/</code> 폴더 파일을 같은 이름으로 교체</li>
-          </ul>
         </div>
       </section>
 
@@ -1007,11 +1185,14 @@ body:not(.is-admin) img.editable-img { cursor: default; }
     <button class="tab active" data-target="home">home</button>
     <button class="tab" data-target="post">post</button>
     <button class="tab" data-target="gallery">gallery</button>
-    <button class="tab" data-target="about">about</button>
-    <button class="tab" data-target="settings">settings</button>
+    <button class="tab" data-target="memo">memo</button>
+    <button class="tab" data-target="settings">공사 중···</button>
   </nav>
 
 </div>
+
+<!-- 토스트 -->
+<div class="memo-toast" id="memoToast"></div>
 
 <!-- 텍스트 드래그 시 뜨는 서식 툴바 -->
 <div class="text-toolbar" id="textToolbar">
@@ -1498,6 +1679,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const postDetailContent = document.getElementById('postDetailContent');
 
   function openPostDetail(card) {
+    repairPostCards();
     postDetailDate.innerHTML = card.querySelector('.post-date').innerHTML;
     postDetailTitle.innerHTML = card.querySelector('h3').innerHTML;
     postDetailContent.innerHTML = card.querySelector('.post-content').innerHTML;
@@ -1543,6 +1725,83 @@ document.addEventListener('DOMContentLoaded', () => {
     openImageUrlModal(newImg);
     scheduleAutoSave();
   });
+
+  /* ============================================================
+     MEMO 탭 (포스트잇)
+     ============================================================ */
+  let memos = []; // { ts, text, color }
+  let selectedMemoColor = 'yellow';
+
+  const memoGrid = document.getElementById('memoGrid');
+  const memoEmpty = document.getElementById('memoEmpty');
+  const memoInput = document.getElementById('memoInput');
+  const memoColorPicker = document.getElementById('memoColorPicker');
+  const memoToast = document.getElementById('memoToast');
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function memoFormatDate(ts) {
+    const d = new Date(ts);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function showToast(msg) {
+    memoToast.textContent = msg;
+    memoToast.classList.add('visible');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => memoToast.classList.remove('visible'), 2200);
+  }
+
+  function renderMemos() {
+    const sorted = [...memos].sort((a, b) => b.ts - a.ts);
+    memoEmpty.hidden = sorted.length > 0;
+    memoGrid.innerHTML = sorted.map((m) => `
+      <div class="memo-card memo-${m.color}" data-ts="${m.ts}">
+        <button type="button" class="memo-delete" data-ts="${m.ts}" title="삭제">✕</button>
+        <div class="memo-text">${esc(m.text)}</div>
+        <p class="memo-date">${memoFormatDate(m.ts)}</p>
+      </div>
+    `).join('');
+  }
+
+  memoColorPicker.addEventListener('click', (e) => {
+    const dot = e.target.closest('.memo-dot');
+    if (!dot) return;
+    selectedMemoColor = dot.dataset.color;
+    memoColorPicker.querySelectorAll('.memo-dot').forEach((d) => d.classList.toggle('selected', d === dot));
+  });
+
+  function addMemo() {
+    const text = memoInput.value.trim();
+    if (!text) return;
+    memos.push({ ts: Date.now(), text, color: selectedMemoColor });
+    memoInput.value = '';
+    renderMemos();
+    memoGrid.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('메모가 남겨졌어요 📝');
+    scheduleAutoSave();
+  }
+  document.getElementById('addMemoBtn').addEventListener('click', addMemo);
+
+  memoGrid.addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.memo-delete');
+    if (!delBtn) return;
+    if (!confirm('이 메모를 삭제할까요?')) return;
+    const ts = Number(delBtn.dataset.ts);
+    memos = memos.filter((m) => m.ts !== ts);
+    renderMemos();
+    showToast('삭제됨');
+    scheduleAutoSave();
+  });
+
+  renderMemos();
 
   /* ============================================================
      관리자 모드 / 읽기전용 / GitHub Gist 동기화
@@ -1665,8 +1924,28 @@ document.addEventListener('DOMContentLoaded', () => {
     setSyncStatus(ok ? '연결됨 ✓' : '불러오기 실패 (Gist ID/토큰 확인)');
   });
 
+  /* ---- 예전 방식으로 저장돼 여러 조각으로 쪼개진 글 자동 복구 ---- */
+  function repairPostCards() {
+    document.querySelectorAll('#postList .post-card').forEach((card) => {
+      if (card.querySelector('.post-content')) return; // 이미 정상 구조
+      const dateEl = card.querySelector('.post-date');
+      const titleEl = card.querySelector('h3');
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'post-content';
+      contentDiv.contentEditable = 'true';
+      contentDiv.spellcheck = false;
+      Array.from(card.children).forEach((el) => {
+        if (el === dateEl || el === titleEl) return;
+        contentDiv.innerHTML += el.innerHTML + '<br>';
+        el.remove();
+      });
+      card.appendChild(contentDiv);
+    });
+  }
+
   /* ---- 데이터 직렬화 / 적용 ---- */
   function serializeSiteData() {
+    repairPostCards(); // 쪼개진 글이 남아있다면 저장 전에 먼저 합쳐줌
     const data = { fields: {}, images: {}, posts: [], gallery: [] };
 
     document.querySelectorAll('[data-field]').forEach((el) => {
@@ -1696,6 +1975,8 @@ document.addEventListener('DOMContentLoaded', () => {
         caption: item.querySelector('.gallery-caption').innerHTML,
       });
     });
+
+    data.memos = memos;
 
     return data;
   }
@@ -1760,6 +2041,11 @@ document.addEventListener('DOMContentLoaded', () => {
         img.style.transform = `translate(${s.x}px, ${s.y}px) scale(${s.scale})`;
         initGalleryCaption(item.querySelector('.gallery-caption'));
       });
+    }
+
+    if (Array.isArray(data.memos)) {
+      memos = data.memos;
+      renderMemos();
     }
 
     // 관리자 모드에서만 contenteditable이 살아있어야 하므로 다시 맞춰줌
@@ -1846,9 +2132,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---- 초기화 ---- */
   (async function initAdminAndSync() {
+    repairPostCards(); // 현재 화면에 남아있는 깨진 글부터 먼저 복구
     // 방문자 포함 전원: Gist가 연결되어 있으면 최신 데이터를 먼저 불러와서 반영
     if (getGistId()) {
       await pullFromGist();
+      repairPostCards();
     }
     // 이 브라우저에서 이미 로그인한 상태였다면 관리자 모드 복원
     setAdminMode(localStorage.getItem(LS_ADMIN) === 'true');
