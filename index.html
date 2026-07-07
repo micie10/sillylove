@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SILLY LOVE</title>
+<title>RUSH X BELVEDERE</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%AB%A7</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/[email protected]/dist/web/static/pretendard.css">
@@ -1676,7 +1676,7 @@ img {
 
   <!-- 하단 탭 바 -->
   <nav class="tabbar" aria-label="메뉴">
-    <button class="tab active" data-target="home">home</button>
+    <button class="tab active" data-target="HOME">HOME</button>
     <button class="tab" data-target="post" data-default-label="LOG">LOG</button>
     <button class="tab" data-target="memo" data-default-label="MEMO">MEMO</button>
     <button class="tab" data-target="profile" data-default-label="PROFILE">PROFILE</button>
@@ -2247,9 +2247,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     img.addEventListener('touchend', endDrag);
 
-    // 마우스 휠로 크기 조절
+    // 마우스 휠로 크기 조절 (Ctrl/Cmd + 휠일 때만 확대/축소, 그냥 휠은 스크롤 그대로 동작)
     img.addEventListener('wheel', (e) => {
       if (!document.body.classList.contains('is-admin')) return;
+      if (!(e.ctrlKey || e.metaKey)) return; // 일반 휠은 막지 않아 목록 스크롤이 정상 작동
       e.preventDefault();
       const s = imgState.get(img);
       const delta = -e.deltaY * 0.0015;
@@ -2643,7 +2644,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="gallery-photo img-frame">
         <img class="editable-img" draggable="false" src="${blankImgSrc}" alt="갤러리 이미지">
         <div class="img-hint img-hint-move">✋</div>
-        <div class="img-hint img-hint-edit">드래그: 위치 · 휠: 크기</div>
+        <div class="img-hint img-hint-edit">드래그: 위치 · Ctrl+휠: 크기</div>
         <button type="button" class="gallery-edit-btn" title="이미지 변경">✎</button>
       </div>
       <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
@@ -3253,7 +3254,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="gallery-photo img-frame">
             <img class="editable-img" draggable="false" src="${g.src}" alt="갤러리 이미지">
             <div class="img-hint img-hint-move">✋</div>
-            <div class="img-hint img-hint-edit">드래그: 위치 · 휠: 크기</div>
+            <div class="img-hint img-hint-edit">드래그: 위치 · Ctrl+휠: 크기</div>
             <button type="button" class="gallery-edit-btn" title="이미지 변경">✎</button>
           </div>
           <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)">${g.caption || ''}</p>
