@@ -6,6 +6,7 @@
 <title>SILLY LOVE</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%AB%A7</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/[email protected]/dist/web/static/pretendard.css">
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=Gaegu:wght@400;700&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;700&family=Black+Han+Sans&family=Jua&family=Poor+Story&family=Gamja+Flower&family=Hi+Melody&family=Stylish&family=Cute+Font&family=Single+Day&family=Yeon+Sung&family=East+Sea+Dokdo&family=Gowun+Batang:wght@400;700&family=Sunflower:wght@300;500;700&family=Song+Myung&display=swap" rel="stylesheet">
 <style>
 /* ============================================
@@ -24,7 +25,7 @@
   --line:       #1c1414;
 
   --font-display: 'Do Hyeon', sans-serif;
-  --font-body:    'Gowun Dodum', sans-serif;
+  --font-body:    'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
   --font-hand:    'Gaegu', cursive;
 
   --radius-card: 34px;
@@ -32,6 +33,19 @@
 }
 
 * { box-sizing: border-box; }
+
+/* 기본 폰트: 모든 요소가 Pretendard를 기본으로 상속하도록 */
+button, input, textarea, select {
+  font-family: inherit;
+}
+
+/* 스크롤은 그대로 동작하되, 스크롤바는 어디서도 보이지 않도록 전역 처리 */
+* {
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* 구형 Edge/IE */
+}
+*::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
 
 body {
   margin: 0;
@@ -179,11 +193,14 @@ body {
   position: relative;
 }
 .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.photo.tall { grid-row: 1 / 2; }
+.photo.tall { grid-row: 1 / 2; height: 360px; }
 
 .pinned {
   grid-column: 2 / 3;
   grid-row: 1 / 2;
+  height: 360px;
+  overflow-y: auto;
+  padding-right: 2px;
 }
 .pinned-title {
   font-family: var(--font-display);
@@ -211,12 +228,20 @@ body {
 }
 .stamp { width: 64px; height: 64px; flex-shrink: 0; border-radius: 50%; overflow: hidden; position: relative; }
 .stamp img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.stamp-note p {
+.stamp-note-text { display: flex; flex-direction: column; gap: 4px; }
+.stamp-note-text p {
   margin: 0;
   font-family: var(--font-hand);
   color: var(--ink-soft);
   font-size: 0.95rem;
 }
+.dday-text {
+  font-family: var(--font-hand);
+  color: var(--accent-deep) !important;
+  font-size: 1.05rem !important;
+  display: none;
+}
+.dday-text.filled { display: block; }
 
 /* ---- POST ---- */
 .post-list {
@@ -235,12 +260,15 @@ body {
   position: relative;
   background: var(--accent-soft);
   border-radius: 18px;
-  padding: 18px 22px;
-  height: 190px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  padding: 16px 22px;
+  height: 92px;
+  min-height: 0;
+  overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   cursor: pointer;
   scrollbar-width: none;      /* Firefox */
   -ms-overflow-style: none;   /* 구형 Edge/IE */
@@ -270,9 +298,9 @@ body {
   justify-content: center;
 }
 .post-card-tools button:hover { background: rgba(0,0,0,0.28); }
-.post-card h3 { margin: 4px 0 8px; font-family: var(--font-display); font-weight: normal; }
+.post-card h3 { margin: 4px 0 0; font-family: var(--font-display); font-weight: normal; }
 .post-date { margin: 0; font-family: var(--font-hand); color: var(--accent-deep); }
-.post-card .post-content { margin: 0; line-height: 1.6; }
+.post-card .post-content { display: none; }
 
 /* ---- 추가 버튼 (post / gallery 공통) ---- */
 .add-btn {
@@ -324,6 +352,63 @@ body {
   object-fit: cover;
   display: block;
 }
+.gallery-edit-btn {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(20,10,12,0.55);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+.is-admin .gallery-edit-btn { display: flex; }
+.gallery-edit-btn:hover { background: rgba(20,10,12,0.75); }
+
+/* ---- 라이트박스 (확대보기) ---- */
+.lightbox-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,5,6,0.85);
+  z-index: 10050;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: zoom-out;
+}
+.lightbox-backdrop.visible { display: flex; }
+.lightbox-img {
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 12px;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+  display: block;
+  cursor: default;
+}
+.lightbox-close {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10051;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.3); }
 
 .gallery-caption {
   margin: 0;
@@ -576,6 +661,265 @@ body {
   background: var(--accent-soft);
   padding: 2px 6px;
   border-radius: 6px;
+}
+
+/* ---- LOG: 검색 / 카테고리 ---- */
+.log-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.log-search {
+  flex: 1;
+  min-width: 140px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-soft);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: #fff;
+}
+.log-search:focus { outline: 2px solid var(--accent-deep); }
+.log-categories {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.log-cat-btn {
+  border: 1px solid var(--accent-soft);
+  background: #fff;
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 6px 8px 6px 14px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.log-cat-btn.active { background: var(--accent-deep); color: #fff; border-color: var(--accent-deep); }
+.log-cat-btn .cat-del {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.18);
+  color: inherit;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.is-admin .log-cat-btn .cat-del { display: flex; }
+.log-cat-add {
+  border: 1px dashed var(--accent-deep);
+  background: transparent;
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: none;
+}
+.is-admin .log-cat-add { display: inline-flex; }
+
+/* ---- LOG: 글 카드 메타(타입/잠금) ---- */
+.post-card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; flex-wrap: wrap; }
+.post-type-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-family: var(--font-body);
+  background: var(--card-bg);
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.post-lock-badge { font-size: 0.85rem; }
+.post-card.is-locked .post-content { filter: blur(5px); user-select: none; }
+
+/* ---- LOG: 공유 버튼 (post-card-tools에 함께 배치) ---- */
+.post-card-tools button.post-share { font-size: 11px; }
+
+/* ---- LOG: 상세보기 첨부 이미지 ---- */
+.post-detail-images { display: flex; flex-direction: column; gap: 12px; margin: 0 0 16px; }
+.post-detail-images img { width: auto; max-width: 100%; height: auto; border-radius: 12px; display: block; }
+
+/* ---- LOG: 댓글 ---- */
+.post-comments { margin-top: 20px; border-top: 1px dashed var(--accent-soft); padding-top: 14px; }
+.post-comments h4 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-weight: normal;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+.comment-item {
+  position: relative;
+  background: var(--accent-soft);
+  border-radius: 12px;
+  padding: 10px 30px 10px 12px;
+  margin-bottom: 8px;
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+.comment-item.secret-locked { color: var(--ink-soft); font-style: italic; }
+.comment-del {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  font-size: 10px;
+  cursor: pointer;
+}
+.is-admin .comment-del { display: flex; align-items: center; justify-content: center; }
+.comment-form { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+.comment-form input[type="text"] {
+  flex: 1;
+  min-width: 130px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-soft);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+.comment-form .field-checkbox { margin: 0; font-size: 0.78rem; }
+.comment-form button {
+  border: none;
+  background: var(--accent-deep);
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+/* ---- PROFILE ---- */
+.profile-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.profile-card2 {
+  border-radius: 22px;
+  padding: 22px;
+  height: 620px;
+  overflow-y: auto;
+}
+.profile-card2 .p-section { margin-bottom: 18px; }
+.profile-photo-frame { aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative; margin-bottom: 4px; }
+.profile-quote {
+  font-family: var(--font-hand);
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 80px;
+  overflow-y: auto;
+}
+.profile-info-scroll { max-height: 160px; overflow-y: auto; }
+.profile-info-table { width: 100%; border-collapse: collapse; }
+.profile-info-table td { padding: 6px 4px; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.85rem; vertical-align: top; }
+.profile-info-table td.label { color: var(--accent-deep); font-family: var(--font-display); width: 34%; }
+.profile-info-row-del {
+  display: none; border: none; background: rgba(0,0,0,0.1); width: 18px; height: 18px; border-radius: 50%;
+  font-size: 10px; cursor: pointer; margin-left: 6px;
+}
+.is-admin .profile-info-row-del { display: inline-flex; align-items: center; justify-content: center; }
+.profile-tags { display: flex; flex-wrap: wrap; gap: 6px; max-height: 84px; overflow-y: auto; }
+.profile-tag {
+  background: rgba(255,255,255,0.6);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.profile-tag button { border: none; background: none; cursor: pointer; font-size: 0.7rem; display: none; padding: 0; }
+.is-admin .profile-tag button { display: inline; }
+.profile-section-title {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin: 0 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.profile-section-tools { display: none; gap: 3px; }
+.is-admin .profile-section-tools { display: flex; }
+.profile-section-tools button {
+  border: none; background: rgba(0,0,0,0.08); width: 20px; height: 20px; border-radius: 50%;
+  font-size: 10px; cursor: pointer;
+}
+.profile-freetext {
+  width: 100%;
+  height: 90px;
+  border: none;
+  background: rgba(255,255,255,0.55);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--ink);
+  outline: none;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.profile-add-row-btn, .profile-add-tag-btn {
+  display: none;
+  border: 1px dashed var(--accent-deep);
+  background: transparent;
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-top: 6px;
+  font-family: var(--font-body);
+}
+.is-admin .profile-add-row-btn, .is-admin .profile-add-tag-btn { display: inline-flex; }
+@media (max-width: 720px) {
+  .profile-cards { grid-template-columns: 1fr; }
+}
+
+/* ---- 탭 이름 편집 힌트 ---- */
+.is-admin .tab { cursor: text; }
+
+/* ---- PROFILE 카드 색상 스와치 (관리자 전용) ---- */
+.profile-color-swatch {
+  display: none;
+  float: right;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.15);
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+.is-admin .profile-color-swatch { display: inline-block; }
+.profile-color-swatch input[type="color"] {
+  position: absolute;
+  inset: -6px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
 }
 
 /* ============================================
@@ -904,6 +1248,15 @@ body:not(.is-admin) {
 }
 body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
 
+/* 모바일 꾹 눌러 저장하기 방지 + 이미지 드래그/우클릭 저장 방지 (관리자 포함 전체) */
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* ---- 공용 모달 ---- */
 .simple-modal-backdrop {
   display: none;
@@ -1072,7 +1425,8 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
   .rail { display: none; }
   .profile { grid-template-columns: auto 1fr; row-gap: 12px; }
   .grid-home { grid-template-columns: 1fr; }
-  .pinned, .stamp-note { grid-column: 1 / 2; }
+  .photo.tall, .pinned, .stamp-note { grid-column: 1 / 2; grid-row: auto; }
+  .photo.tall, .pinned { height: 340px; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
   .memo-grid { grid-template-columns: repeat(2, 1fr); }
   .tab { font-size: 0.95rem; }
@@ -1138,29 +1492,43 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
               <img class="editable-img" data-field="img-stamp" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTE4YmExIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1kYXNoYXJyYXk9IjQgMyIvPgogIDxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjQyIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMThiYTEiIHN0cm9rZS13aWR0aD0iMiIvPgogIDx0ZXh0IHg9IjYwIiB5PSI2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkdhZWd1LCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjZTE4YmExIj5zdGFtcDwvdGV4dD4KPC9zdmc+Cg==" alt="도장">
               <div class="img-hint img-hint-move">✋</div>
             </div>
-            <p contenteditable="true" spellcheck="false" data-field="stamp-note">"짧은 소개 문구나 좌우명을 적는 자리입니다."</p>
+            <div class="stamp-note-text">
+              <p class="dday-text" id="ddayText"></p>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- POST -->
+      <!-- LOG -->
       <section class="panel" id="panel-post" hidden>
-        <button type="button" class="add-btn" id="addPostBtn"><span class="plus">＋</span> 새 글 추가</button>
+        <div class="log-toolbar">
+          <button type="button" class="add-btn" id="addPostBtn"><span class="plus">＋</span> 새 글 추가</button>
+          <input type="text" class="log-search" id="logSearchInput" placeholder="제목·내용 검색">
+        </div>
+        <div class="log-categories" id="logCategories"></div>
         <div class="post-list" id="postList">
-          <article class="post-card">
+          <article class="post-card" data-id="p1" data-category="" data-type="LOG" data-secret="false" data-secretpw="" data-images="">
             <div class="post-card-tools">
+              <button type="button" class="post-share" title="공유">🔗</button>
               <button type="button" class="post-edit" title="수정">✎</button>
               <button type="button" class="post-delete" title="삭제">✕</button>
+            </div>
+            <div class="post-card-meta">
+              <span class="post-type-badge">LOG</span>
             </div>
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.05</p>
             <h3 contenteditable="true" spellcheck="false">첫 글의 제목</h3>
             <div class="post-content" contenteditable="true" spellcheck="false">여기에 새 글의 내용을 적어보세요. 이 사이트는 개인 백업용이라
             편하게 마음대로 채워도 괜찮습니다.</div>
           </article>
-          <article class="post-card">
+          <article class="post-card" data-id="p2" data-category="" data-type="LOG" data-secret="false" data-secretpw="" data-images="">
             <div class="post-card-tools">
+              <button type="button" class="post-share" title="공유">🔗</button>
               <button type="button" class="post-edit" title="수정">✎</button>
               <button type="button" class="post-delete" title="삭제">✕</button>
+            </div>
+            <div class="post-card-meta">
+              <span class="post-type-badge">LOG</span>
             </div>
             <p class="post-date" contenteditable="true" spellcheck="false">2026.07.01</p>
             <h3 contenteditable="true" spellcheck="false">또 다른 기록</h3>
@@ -1202,9 +1570,104 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
         </div>
       </section>
 
-      <!-- 공사 중 -->
-      <section class="panel" id="panel-settings" hidden>
-        <div class="settings-body">
+      <!-- PROFILE -->
+      <section class="panel" id="panel-profile" hidden>
+        <div class="profile-cards" id="profileCards">
+          <div class="profile-card2" id="profileCard-left" data-side="left">
+            <label class="profile-color-swatch" title="카드 색상"><input type="color" class="profile-color-input" data-side="left" value="#fffaf9"></label>
+            <div class="p-section" data-section="photo">
+              <div class="profile-photo-frame img-frame">
+                <img class="editable-img" data-field="img-profile-left-photo" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y3ZGJlMSIvPjwvc3ZnPg==" alt="왼쪽 프로필 사진">
+                <div class="img-hint img-hint-move">✋</div>
+                <div class="img-hint img-hint-edit">클릭하여 변경</div>
+              </div>
+            </div>
+            <div class="p-section" data-section="quote">
+              <p class="profile-quote" contenteditable="true" spellcheck="false" data-field="profile-left-quote">"명대사를 적어보세요."</p>
+            </div>
+            <div class="p-section" data-section="info">
+              <div class="profile-section-title">정보<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-info-scroll"><table class="profile-info-table"><tbody data-info-side="left">
+                <tr><td class="label" contenteditable="true" spellcheck="false">이름</td><td contenteditable="true" spellcheck="false">이름을 적어보세요</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td></tr>
+                <tr><td class="label" contenteditable="true" spellcheck="false">나이</td><td contenteditable="true" spellcheck="false">나이를 적어보세요</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td></tr>
+              </tbody></table></div>
+              <button type="button" class="profile-add-row-btn" data-side="left">＋ 행 추가</button>
+            </div>
+            <div class="p-section" data-section="appearance">
+              <div class="profile-section-title">외모<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-left-appearance">외모를 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="personality">
+              <div class="profile-section-title">성격<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-left-personality">성격을 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="ability">
+              <div class="profile-section-title">능력<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-left-ability">능력을 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="backstory">
+              <div class="profile-section-title">서사<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-left-backstory">서사(백스토리)를 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="likes">
+              <div class="profile-section-title">좋아하는 것<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-tags" data-tags-side="left" data-tags-kind="likes"></div>
+              <button type="button" class="profile-add-tag-btn" data-side="left" data-kind="likes">＋ 태그 추가</button>
+            </div>
+            <div class="p-section" data-section="dislikes">
+              <div class="profile-section-title">싫어하는 것<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-tags" data-tags-side="left" data-tags-kind="dislikes"></div>
+              <button type="button" class="profile-add-tag-btn" data-side="left" data-kind="dislikes">＋ 태그 추가</button>
+            </div>
+          </div>
+
+          <div class="profile-card2" id="profileCard-right" data-side="right">
+            <label class="profile-color-swatch" title="카드 색상"><input type="color" class="profile-color-input" data-side="right" value="#fffaf9"></label>
+            <div class="p-section" data-section="photo">
+              <div class="profile-photo-frame img-frame">
+                <img class="editable-img" data-field="img-profile-right-photo" draggable="false" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y3ZGJlMSIvPjwvc3ZnPg==" alt="오른쪽 프로필 사진">
+                <div class="img-hint img-hint-move">✋</div>
+                <div class="img-hint img-hint-edit">클릭하여 변경</div>
+              </div>
+            </div>
+            <div class="p-section" data-section="quote">
+              <p class="profile-quote" contenteditable="true" spellcheck="false" data-field="profile-right-quote">"명대사를 적어보세요."</p>
+            </div>
+            <div class="p-section" data-section="info">
+              <div class="profile-section-title">정보<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-info-scroll"><table class="profile-info-table"><tbody data-info-side="right">
+                <tr><td class="label" contenteditable="true" spellcheck="false">이름</td><td contenteditable="true" spellcheck="false">이름을 적어보세요</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td></tr>
+                <tr><td class="label" contenteditable="true" spellcheck="false">나이</td><td contenteditable="true" spellcheck="false">나이를 적어보세요</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td></tr>
+              </tbody></table></div>
+              <button type="button" class="profile-add-row-btn" data-side="right">＋ 행 추가</button>
+            </div>
+            <div class="p-section" data-section="appearance">
+              <div class="profile-section-title">외모<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-right-appearance">외모를 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="personality">
+              <div class="profile-section-title">성격<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-right-personality">성격을 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="ability">
+              <div class="profile-section-title">능력<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-right-ability">능력을 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="backstory">
+              <div class="profile-section-title">서사<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-freetext" contenteditable="true" spellcheck="false" data-field="profile-right-backstory">서사(백스토리)를 자유롭게 적어보세요.</div>
+            </div>
+            <div class="p-section" data-section="likes">
+              <div class="profile-section-title">좋아하는 것<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-tags" data-tags-side="right" data-tags-kind="likes"></div>
+              <button type="button" class="profile-add-tag-btn" data-side="right" data-kind="likes">＋ 태그 추가</button>
+            </div>
+            <div class="p-section" data-section="dislikes">
+              <div class="profile-section-title">싫어하는 것<div class="profile-section-tools"><button type="button" class="sec-up" title="위로">↑</button><button type="button" class="sec-down" title="아래로">↓</button></div></div>
+              <div class="profile-tags" data-tags-side="right" data-tags-kind="dislikes"></div>
+              <button type="button" class="profile-add-tag-btn" data-side="right" data-kind="dislikes">＋ 태그 추가</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1214,10 +1677,10 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
   <!-- 하단 탭 바 -->
   <nav class="tabbar" aria-label="메뉴">
     <button class="tab active" data-target="home">home</button>
-    <button class="tab" data-target="post">post</button>
-    <button class="tab" data-target="gallery">gallery</button>
-    <button class="tab" data-target="memo">memo</button>
-    <button class="tab" data-target="settings">공사 중···</button>
+    <button class="tab" data-target="post" data-default-label="LOG">LOG</button>
+    <button class="tab" data-target="memo" data-default-label="MEMO">MEMO</button>
+    <button class="tab" data-target="profile" data-default-label="PROFILE">PROFILE</button>
+    <button class="tab" data-target="gallery" data-default-label="GALLERY">GALLERY</button>
   </nav>
 
 </div>
@@ -1298,6 +1761,12 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
   </div>
 </div>
 
+<!-- 라이트박스 (갤러리 이미지 확대보기) -->
+<div class="lightbox-backdrop" id="lightboxBackdrop">
+  <button type="button" class="lightbox-close" id="lightboxClose">✕</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="확대 이미지">
+</div>
+
 <!-- 읽기 전용 안내 배지 -->
 <div class="status-bar" id="readonlyBar">
   🔒 읽기 전용 모드입니다
@@ -1307,6 +1776,7 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
 <!-- 관리자 모드 상단 바 -->
 <div class="status-bar admin-bar" id="adminBar" style="display:none;">
   ✏️ 관리자 모드
+  <button type="button" id="siteSettingsBtn">⚙️ 설정</button>
   <button type="button" id="githubConnectBtn">GitHub 연결</button>
   <button type="button" id="manualSaveBtn">지금 저장</button>
   <button type="button" id="manualLoadBtn">불러오기</button>
@@ -1355,13 +1825,86 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
   </div>
 </div>
 
+<!-- 사이트 설정 모달 -->
+<div class="simple-modal-backdrop" id="settingsModalBackdrop">
+  <div class="simple-modal" style="width:min(460px,100%);">
+    <h3>사이트 설정</h3>
+    <div class="field-row">
+      <label>사이트 제목</label>
+      <input type="text" id="settingSiteTitle" placeholder="사이트 제목">
+    </div>
+    <div class="field-row">
+      <label>사이트 설명</label>
+      <input type="text" id="settingSiteDesc" placeholder="사이트 한 줄 설명">
+    </div>
+    <div class="field-row">
+      <label>D-day 기준일</label>
+      <input type="text" id="settingDdayDate" placeholder="YYYY-MM-DD">
+    </div>
+    <div class="field-row">
+      <label>D-day 라벨</label>
+      <input type="text" id="settingDdayLabel" placeholder="예: 우리가 만난 지">
+    </div>
+    <div class="field-row">
+      <label>바깥 배경 이미지 URL (선택)</label>
+      <input type="text" id="settingBgImage" placeholder="https://i.imgur.com/...">
+    </div>
+    <div class="field-row">
+      <label>배경 블러 정도: <span id="settingBgBlurVal">0</span>px</label>
+      <input type="range" id="settingBgBlur" min="0" max="20" value="0" style="width:100%;">
+    </div>
+    <div class="field-row">
+      <label>관리자 비밀번호 변경 (선택, 비워두면 유지)</label>
+      <input type="password" id="settingNewPassword" placeholder="새 비밀번호">
+    </div>
+    <p class="form-error" id="settingsError"></p>
+    <div class="simple-modal-actions">
+      <button type="button" class="secondary" id="settingsCancel">취소</button>
+      <button type="button" class="primary" id="settingsSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 비밀글 비밀번호 입력 모달 -->
+<div class="simple-modal-backdrop" id="secretPostModalBackdrop">
+  <div class="simple-modal">
+    <h3>🔒 비밀글</h3>
+    <p>이 글은 비밀글이에요. 비밀번호를 입력하면 열람할 수 있어요.</p>
+    <div class="field-row">
+      <label>비밀번호</label>
+      <input type="password" id="secretPostPasswordInput" placeholder="비밀번호">
+    </div>
+    <p class="form-error" id="secretPostError"></p>
+    <div class="simple-modal-actions">
+      <button type="button" class="secondary" id="secretPostCancel">취소</button>
+      <button type="button" class="primary" id="secretPostSubmit">열람</button>
+    </div>
+  </div>
+</div>
+
 <!-- 글 상세 보기 모달 -->
 <div class="simple-modal-backdrop" id="postDetailBackdrop">
   <div class="post-detail-modal">
+    <div class="post-card-meta">
+      <span class="post-type-badge" id="postDetailType"></span>
+    </div>
     <p class="post-date" id="postDetailDate"></p>
     <h3 id="postDetailTitle"></h3>
+    <div class="post-detail-images" id="postDetailImages"></div>
     <div class="post-detail-content" id="postDetailContent"></div>
-    <button type="button" class="post-detail-close" id="postDetailClose">닫기</button>
+    <div class="post-comments">
+      <h4>댓글</h4>
+      <div id="postDetailComments"></div>
+      <div class="comment-form">
+        <input type="text" id="commentInput" placeholder="댓글을 남겨보세요" maxlength="300">
+        <label class="field-checkbox"><input type="checkbox" id="commentSecretCheck"> 비밀 댓글</label>
+        <button type="button" id="commentSubmitBtn">등록</button>
+      </div>
+    </div>
+    <div class="simple-modal-actions" style="margin-top:16px;">
+      <button type="button" class="secondary" id="postDetailShare">🔗 공유</button>
+      <button type="button" class="post-detail-close" id="postDetailClose">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -1377,6 +1920,21 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
       <label>제목</label>
       <input type="text" id="postEditTitle">
     </div>
+    <div class="field-row" style="display:flex; gap:10px;">
+      <div style="flex:1;">
+        <label>타입</label>
+        <select id="postEditType" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--accent-soft); font-family:var(--font-body);">
+          <option value="LOG">LOG</option>
+          <option value="PHOTO GALLERY">PHOTO GALLERY</option>
+          <option value="DAILY">DAILY</option>
+          <option value="MEMO">MEMO</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label>카테고리</label>
+        <select id="postEditCategory" style="width:100%; padding:10px; border-radius:12px; border:1px solid var(--accent-soft); font-family:var(--font-body);"></select>
+      </div>
+    </div>
     <div class="field-row">
       <label>내용</label>
       <label class="field-checkbox">
@@ -1384,6 +1942,17 @@ body:not(.is-admin) img { -webkit-user-drag: none; user-drag: none; }
         HTML로 입력 (태그를 직접 작성해서 넣기)
       </label>
       <textarea id="postEditContent" placeholder="글 내용을 입력하세요"></textarea>
+    </div>
+    <div class="field-row">
+      <label>첨부 이미지 URL (쉼표로 구분, 선택)</label>
+      <input type="text" id="postEditImages" placeholder="https://i.imgur.com/a.jpg, https://i.imgur.com/b.jpg">
+    </div>
+    <div class="field-row">
+      <label class="field-checkbox">
+        <input type="checkbox" id="postEditSecret">
+        비밀글로 설정
+      </label>
+      <input type="password" id="postEditSecretPw" placeholder="비밀글 비밀번호">
     </div>
     <div class="simple-modal-actions">
       <button type="button" class="secondary" id="postEditCancel">취소</button>
@@ -1649,8 +2218,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!dragging) return;
       dragging = false;
       img.classList.remove('dragging');
-      if (!moved) openImageUrlModal(img);
-      else scheduleAutoSave();
+      if (!moved) {
+        if (img.closest('.gallery-photo')) openLightbox(img.getAttribute('src'));
+        else openImageUrlModal(img);
+      } else {
+        scheduleAutoSave();
+      }
     }
 
     // 마우스 드래그로 위치 이동, 클릭이면(움직임 없으면) 이미지 변경 모달
@@ -1702,10 +2275,110 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.gallery-caption').forEach(initGalleryCaption);
 
   /* ============================================
-     post: 새 글 추가
+     post(LOG): 새 글 추가 / 카테고리 / 검색 / 비밀글 / 댓글 / 공유
      ============================================ */
   const addPostBtn = document.getElementById('addPostBtn');
   const postList   = document.getElementById('postList');
+  const logSearchInput = document.getElementById('logSearchInput');
+  const logCategoriesEl = document.getElementById('logCategories');
+
+  function genId(prefix) {
+    return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  let logCategories = [];   // 카테고리 이름 배열
+  let activeCategory = '';  // '' = 전체
+  let searchQuery = '';
+  let postComments = {};    // { postId: [{ts, text, secret}] }
+  const unlockedSecrets = new Set(); // 이번 방문에서 열람 허용된 비밀글 id
+
+  function renderLogCategories() {
+    const chips = ['<button type="button" class="log-cat-btn' + (activeCategory === '' ? ' active' : '') + '" data-cat="">전체</button>'];
+    logCategories.forEach((cat) => {
+      chips.push(
+        '<button type="button" class="log-cat-btn' + (activeCategory === cat ? ' active' : '') + '" data-cat="' + esc(cat) + '">' +
+        esc(cat) + '<button type="button" class="cat-del" data-cat-del="' + esc(cat) + '" title="삭제">✕</button></button>'
+      );
+    });
+    chips.push('<button type="button" class="log-cat-add" id="logCatAddBtn">＋ 카테고리</button>');
+    logCategoriesEl.innerHTML = chips.join('');
+  }
+
+  function applyLogFilter() {
+    postList.querySelectorAll('.post-card').forEach((card) => {
+      const cat = card.dataset.category || '';
+      const text = (card.querySelector('h3').textContent + ' ' + card.querySelector('.post-content').textContent).toLowerCase();
+      const matchCat = activeCategory === '' || cat === activeCategory;
+      const matchSearch = searchQuery === '' || text.includes(searchQuery);
+      card.style.display = (matchCat && matchSearch) ? '' : 'none';
+    });
+  }
+
+  logCategoriesEl.addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.cat-del');
+    if (delBtn) {
+      e.stopPropagation();
+      if (!confirm('"' + delBtn.dataset.catDel + '" 카테고리를 삭제할까요? (글은 삭제되지 않아요)')) return;
+      logCategories = logCategories.filter((c) => c !== delBtn.dataset.catDel);
+      if (activeCategory === delBtn.dataset.catDel) activeCategory = '';
+      renderLogCategories();
+      applyLogFilter();
+      scheduleAutoSave();
+      return;
+    }
+    const addBtn = e.target.closest('#logCatAddBtn');
+    if (addBtn) {
+      const name = prompt('새 카테고리 이름을 입력하세요');
+      if (name && name.trim() && !logCategories.includes(name.trim())) {
+        logCategories.push(name.trim());
+        renderLogCategories();
+        scheduleAutoSave();
+      }
+      return;
+    }
+    const catBtn = e.target.closest('.log-cat-btn');
+    if (catBtn) {
+      activeCategory = catBtn.dataset.cat || '';
+      renderLogCategories();
+      applyLogFilter();
+    }
+  });
+  logCategoriesEl.addEventListener('dblclick', (e) => {
+    if (!isAdmin()) return;
+    const catBtn = e.target.closest('.log-cat-btn');
+    if (!catBtn || !catBtn.dataset.cat) return;
+    const oldName = catBtn.dataset.cat;
+    const newName = prompt('카테고리 이름 변경', oldName);
+    if (!newName || !newName.trim() || newName.trim() === oldName) return;
+    logCategories = logCategories.map((c) => (c === oldName ? newName.trim() : c));
+    postList.querySelectorAll('.post-card').forEach((card) => {
+      if (card.dataset.category === oldName) card.dataset.category = newName.trim();
+    });
+    if (activeCategory === oldName) activeCategory = newName.trim();
+    renderLogCategories();
+    scheduleAutoSave();
+  });
+
+  logSearchInput.addEventListener('input', () => {
+    searchQuery = logSearchInput.value.trim().toLowerCase();
+    applyLogFilter();
+  });
+
+  function postTypeBadgeText(type) { return type || 'LOG'; }
+
+  function makePostCardHtml(dateStr, title, content) {
+    return `
+      <div class="post-card-tools">
+        <button type="button" class="post-share" title="공유">🔗</button>
+        <button type="button" class="post-edit" title="수정">✎</button>
+        <button type="button" class="post-delete" title="삭제">✕</button>
+      </div>
+      <div class="post-card-meta"><span class="post-type-badge">LOG</span></div>
+      <p class="post-date" contenteditable="true" spellcheck="false">${dateStr}</p>
+      <h3 contenteditable="true" spellcheck="false">${title}</h3>
+      <div class="post-content" contenteditable="true" spellcheck="false">${content}</div>
+    `;
+  }
 
   addPostBtn.addEventListener('click', () => {
     const today = new Date();
@@ -1713,16 +2386,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const article = document.createElement('article');
     article.className = 'post-card';
-    article.innerHTML = `
-      <div class="post-card-tools">
-        <button type="button" class="post-edit" title="수정">✎</button>
-        <button type="button" class="post-delete" title="삭제">✕</button>
-      </div>
-      <p class="post-date" contenteditable="true" spellcheck="false">${dateStr}</p>
-      <h3 contenteditable="true" spellcheck="false">새 글 제목</h3>
-      <div class="post-content" contenteditable="true" spellcheck="false">내용을 입력해보세요.</div>
-    `;
+    article.dataset.id = genId('p');
+    article.dataset.category = '';
+    article.dataset.type = 'LOG';
+    article.dataset.secret = 'false';
+    article.dataset.secretpw = '';
+    article.dataset.images = '';
+    article.innerHTML = makePostCardHtml(dateStr, '새 글 제목', '내용을 입력해보세요.');
     postList.prepend(article);
+    applyLogFilter();
     scheduleAutoSave();
 
     const title = article.querySelector('h3');
@@ -1739,15 +2411,116 @@ document.addEventListener('DOMContentLoaded', () => {
   const postDetailDate = document.getElementById('postDetailDate');
   const postDetailTitle = document.getElementById('postDetailTitle');
   const postDetailContent = document.getElementById('postDetailContent');
+  const postDetailType = document.getElementById('postDetailType');
+  const postDetailImages = document.getElementById('postDetailImages');
+  const postDetailComments = document.getElementById('postDetailComments');
+  const commentInput = document.getElementById('commentInput');
+  const commentSecretCheck = document.getElementById('commentSecretCheck');
+  let currentDetailPostId = null;
+
+  function renderPostComments(postId) {
+    const list = postComments[postId] || [];
+    if (!list.length) {
+      postDetailComments.innerHTML = '<p style="color:var(--ink-soft); font-family:var(--font-hand); font-size:0.9rem;">아직 댓글이 없어요.</p>';
+      return;
+    }
+    postDetailComments.innerHTML = list.map((c) => {
+      const locked = c.secret && !isAdmin();
+      return `<div class="comment-item${locked ? ' secret-locked' : ''}" data-ts="${c.ts}">
+        <button type="button" class="comment-del" data-ts="${c.ts}" title="삭제">✕</button>
+        ${locked ? '🔒 비밀 댓글입니다' : esc(c.text)}
+      </div>`;
+    }).join('');
+  }
 
   function openPostDetail(card) {
     repairPostCards();
+    currentDetailPostId = card.dataset.id;
+    postDetailType.textContent = postTypeBadgeText(card.dataset.type);
     postDetailDate.innerHTML = card.querySelector('.post-date').innerHTML;
     postDetailTitle.innerHTML = card.querySelector('h3').innerHTML;
     postDetailContent.innerHTML = card.querySelector('.post-content').innerHTML;
+    const imgs = (card.dataset.images || '').split(',').map((s) => s.trim()).filter(Boolean);
+    postDetailImages.innerHTML = imgs.map((src) => `<img src="${esc(src)}" alt="첨부 이미지">`).join('');
+    renderPostComments(currentDetailPostId);
     postDetailBackdrop.classList.add('visible');
   }
-  function closePostDetail() { postDetailBackdrop.classList.remove('visible'); }
+  function closePostDetail() { postDetailBackdrop.classList.remove('visible'); currentDetailPostId = null; }
+
+  document.getElementById('commentSubmitBtn').addEventListener('click', () => {
+    if (!currentDetailPostId) return;
+    const text = commentInput.value.trim();
+    if (!text) return;
+    if (!postComments[currentDetailPostId]) postComments[currentDetailPostId] = [];
+    postComments[currentDetailPostId].push({ ts: Date.now(), text, secret: commentSecretCheck.checked });
+    commentInput.value = '';
+    commentSecretCheck.checked = false;
+    renderPostComments(currentDetailPostId);
+    showToast('댓글이 등록되었어요');
+    scheduleAutoSave();
+  });
+  postDetailComments.addEventListener('click', (e) => {
+    const delBtn = e.target.closest('.comment-del');
+    if (!delBtn || !isAdmin()) return;
+    if (!confirm('댓글을 삭제할까요?')) return;
+    const ts = Number(delBtn.dataset.ts);
+    postComments[currentDetailPostId] = (postComments[currentDetailPostId] || []).filter((c) => c.ts !== ts);
+    renderPostComments(currentDetailPostId);
+    scheduleAutoSave();
+  });
+
+  function buildShareUrl(postId) {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('post', postId);
+    return url.toString();
+  }
+  async function sharePost(postId) {
+    const url = buildShareUrl(postId);
+    if (navigator.share) {
+      try { await navigator.share({ url }); return; } catch (e) { /* 취소 등 */ }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('링크가 복사되었어요 🔗');
+    } catch (e) {
+      prompt('아래 링크를 복사하세요', url);
+    }
+  }
+  document.getElementById('postDetailShare').addEventListener('click', () => {
+    if (currentDetailPostId) sharePost(currentDetailPostId);
+  });
+
+  /* ---- 비밀글 잠금 해제 모달 ---- */
+  const secretPostModalBackdrop = document.getElementById('secretPostModalBackdrop');
+  const secretPostPasswordInput = document.getElementById('secretPostPasswordInput');
+  const secretPostError = document.getElementById('secretPostError');
+  let pendingSecretCard = null;
+
+  function openSecretPostModal(card) {
+    pendingSecretCard = card;
+    secretPostPasswordInput.value = '';
+    secretPostError.textContent = '';
+    secretPostModalBackdrop.classList.add('visible');
+    setTimeout(() => secretPostPasswordInput.focus(), 50);
+  }
+  function closeSecretPostModal() {
+    secretPostModalBackdrop.classList.remove('visible');
+    pendingSecretCard = null;
+  }
+  document.getElementById('secretPostCancel').addEventListener('click', closeSecretPostModal);
+  secretPostModalBackdrop.addEventListener('click', (e) => { if (e.target === secretPostModalBackdrop) closeSecretPostModal(); });
+  document.getElementById('secretPostSubmit').addEventListener('click', () => {
+    if (!pendingSecretCard) return;
+    if (secretPostPasswordInput.value === (pendingSecretCard.dataset.secretpw || '')) {
+      unlockedSecrets.add(pendingSecretCard.dataset.id);
+      const card = pendingSecretCard;
+      closeSecretPostModal();
+      openPostDetail(card);
+    } else {
+      secretPostError.textContent = '비밀번호가 올바르지 않습니다.';
+    }
+  });
 
   /* ---- 글 수정 모달 ---- */
   const postEditBackdrop = document.getElementById('postEditBackdrop');
@@ -1755,7 +2528,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const postEditTitle = document.getElementById('postEditTitle');
   const postEditContent = document.getElementById('postEditContent');
   const postEditHtmlMode = document.getElementById('postEditHtmlMode');
+  const postEditType = document.getElementById('postEditType');
+  const postEditCategory = document.getElementById('postEditCategory');
+  const postEditImages = document.getElementById('postEditImages');
+  const postEditSecret = document.getElementById('postEditSecret');
+  const postEditSecretPw = document.getElementById('postEditSecretPw');
   let editingPostCard = null;
+
+  function fillPostEditCategoryOptions(selected) {
+    const opts = ['<option value="">미분류</option>'].concat(
+      logCategories.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`)
+    );
+    postEditCategory.innerHTML = opts.join('');
+    postEditCategory.value = selected || '';
+  }
 
   function openPostEdit(card) {
     repairPostCards();
@@ -1764,6 +2550,11 @@ document.addEventListener('DOMContentLoaded', () => {
     postEditTitle.value = card.querySelector('h3').textContent.trim();
     postEditContent.value = card.querySelector('.post-content').innerHTML.trim();
     postEditHtmlMode.checked = true; // 기존 내용은 이미 HTML 형태라 기본은 HTML 모드로
+    postEditType.value = card.dataset.type || 'LOG';
+    fillPostEditCategoryOptions(card.dataset.category || '');
+    postEditImages.value = card.dataset.images || '';
+    postEditSecret.checked = card.dataset.secret === 'true';
+    postEditSecretPw.value = card.dataset.secretpw || '';
     postEditBackdrop.classList.add('visible');
     setTimeout(() => postEditTitle.focus(), 50);
   }
@@ -1784,7 +2575,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // 일반 텍스트 모드: 줄바꿈만 <br>로 변환, 나머지는 그대로 이스케이프해서 넣음
       contentEl.innerHTML = esc(postEditContent.value).replace(/\n/g, '<br>');
     }
+    editingPostCard.dataset.type = postEditType.value;
+    editingPostCard.dataset.category = postEditCategory.value;
+    editingPostCard.dataset.images = postEditImages.value.trim();
+    editingPostCard.dataset.secret = postEditSecret.checked ? 'true' : 'false';
+    editingPostCard.dataset.secretpw = postEditSecretPw.value;
+    const badge = editingPostCard.querySelector('.post-type-badge');
+    if (badge) badge.textContent = postTypeBadgeText(postEditType.value);
+    if (!editingPostCard.dataset.id) editingPostCard.dataset.id = genId('p');
     closePostEdit();
+    applyLogFilter();
     scheduleAutoSave();
   });
 
@@ -1797,21 +2597,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const delBtn = e.target.closest('.post-delete');
     if (delBtn) {
       if (confirm('이 글을 삭제할까요?')) {
-        delBtn.closest('.post-card').remove();
+        const card = delBtn.closest('.post-card');
+        delete postComments[card.dataset.id];
+        card.remove();
         scheduleAutoSave();
       }
+      return;
+    }
+    const shareBtn = e.target.closest('.post-share');
+    if (shareBtn) {
+      const card = shareBtn.closest('.post-card');
+      sharePost(card.dataset.id);
       return;
     }
     if (isAdmin()) return; // 관리자 모드에서는 클릭 = 편집이므로 상세보기를 열지 않음
     const sel = window.getSelection();
     if (sel && sel.toString().length > 0) return; // 텍스트 선택 중이면 무시
     const card = e.target.closest('.post-card');
-    if (card) openPostDetail(card);
+    if (!card) return;
+    if (card.dataset.secret === 'true' && !unlockedSecrets.has(card.dataset.id)) {
+      openSecretPostModal(card);
+      return;
+    }
+    openPostDetail(card);
   });
   document.getElementById('postDetailClose').addEventListener('click', closePostDetail);
   postDetailBackdrop.addEventListener('click', (e) => {
     if (e.target === postDetailBackdrop) closePostDetail();
   });
+
+  renderLogCategories();
+  applyLogFilter();
 
   /* ============================================
      gallery: 이미지 추가
@@ -1827,7 +2643,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="gallery-photo img-frame">
         <img class="editable-img" draggable="false" src="${blankImgSrc}" alt="갤러리 이미지">
         <div class="img-hint img-hint-move">✋</div>
-        <div class="img-hint img-hint-edit">클릭하여 변경</div>
+        <div class="img-hint img-hint-edit">드래그: 위치 · 휠: 크기</div>
+        <button type="button" class="gallery-edit-btn" title="이미지 변경">✎</button>
       </div>
       <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)"></p>
     `;
@@ -1838,6 +2655,41 @@ document.addEventListener('DOMContentLoaded', () => {
     initGalleryCaption(item.querySelector('.gallery-caption'));
     openImageUrlModal(newImg);
     scheduleAutoSave();
+  });
+
+  /* ---- 라이트박스 (이미지 확대보기) ---- */
+  const lightboxBackdrop = document.getElementById('lightboxBackdrop');
+  const lightboxImg = document.getElementById('lightboxImg');
+  function openLightbox(src) {
+    if (!src) return;
+    lightboxImg.src = src;
+    lightboxBackdrop.classList.add('visible');
+  }
+  function closeLightbox() {
+    lightboxBackdrop.classList.remove('visible');
+    lightboxImg.src = '';
+  }
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  lightboxBackdrop.addEventListener('click', (e) => {
+    if (e.target === lightboxBackdrop) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightboxBackdrop.classList.contains('visible')) closeLightbox();
+  });
+
+  // 갤러리 이미지 클릭: 관리자는 위 endDrag 로직에서 처리, 방문자는 여기서 라이트박스를 연다.
+  // 편집(✎) 버튼은 관리자 전용으로, 이미지 URL 변경 모달을 연다.
+  galleryGrid.addEventListener('click', (e) => {
+    const editBtn = e.target.closest('.gallery-edit-btn');
+    if (editBtn) {
+      e.stopPropagation();
+      const img = editBtn.closest('.gallery-photo').querySelector('img.editable-img');
+      if (img) openImageUrlModal(img);
+      return;
+    }
+    if (isAdmin()) return;
+    const img = e.target.closest('.gallery-photo img.editable-img');
+    if (img) openLightbox(img.getAttribute('src'));
   });
 
   /* ============================================================
@@ -1924,7 +2776,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ⚠️ 이 코드는 정적 사이트라 진짜 보안이 아닙니다.
   // 여기 적힌 비밀번호는 누구나 파일을 열어보면 볼 수 있어요.
   // "아무나 못 건드리게 막는 정도"의 잠금장치로 생각해주세요.
-  const ADMIN_CODE = '0425'; // 원하는 비밀번호로 바꿔서 사용하세요.
+  const LS_ADMIN_CODE = 'site_admin_code';
+  let ADMIN_CODE = localStorage.getItem(LS_ADMIN_CODE) || '0425'; // 설정 모달에서 변경 가능
 
   // Gist ID는 비밀번호가 아니라 "주소"라서 파일에 그대로 적어둬도 괜찮아요.
   // 관리자 화면에서 한 번 연결하면 아래 값 대신 그 값을 써서 저장/불러오기 합니다.
@@ -1980,15 +2833,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return document.body.classList.contains('is-admin');
   }
 
-  /* ---- 이미지 우클릭 금지 / 글 드래그(선택) 금지 (관리자 제외) ---- */
+  /* ---- 이미지 우클릭 / 드래그 저장 금지 (모든 사용자, 관리자 포함) ---- */
   document.addEventListener('contextmenu', (e) => {
-    if (!isAdmin() && e.target.tagName === 'IMG') e.preventDefault();
+    if (e.target.tagName === 'IMG') e.preventDefault();
   });
   document.addEventListener('selectstart', (e) => {
     if (!isAdmin()) e.preventDefault();
   });
   document.addEventListener('dragstart', (e) => {
-    if (!isAdmin() && e.target.tagName === 'IMG') e.preventDefault();
+    if (e.target.tagName === 'IMG') e.preventDefault();
   });
 
   /* ---- 로그인 모달 ---- */
@@ -2057,26 +2910,217 @@ document.addEventListener('DOMContentLoaded', () => {
         toolsEl = document.createElement('div');
         toolsEl.className = 'post-card-tools';
         toolsEl.innerHTML = `
+          <button type="button" class="post-share" title="공유">🔗</button>
           <button type="button" class="post-edit" title="수정">✎</button>
           <button type="button" class="post-delete" title="삭제">✕</button>
         `;
         card.prepend(toolsEl);
+      } else if (!toolsEl.querySelector('.post-share')) {
+        toolsEl.insertAdjacentHTML('afterbegin', '<button type="button" class="post-share" title="공유">🔗</button>');
       }
+      if (!card.querySelector('.post-card-meta')) {
+        const meta = document.createElement('div');
+        meta.className = 'post-card-meta';
+        meta.innerHTML = '<span class="post-type-badge">' + (card.dataset.type || 'LOG') + '</span>';
+        toolsEl.insertAdjacentElement('afterend', meta);
+      }
+      if (!card.dataset.id) card.dataset.id = genId('p');
+      if (card.dataset.category === undefined) card.dataset.category = '';
+      if (!card.dataset.type) card.dataset.type = 'LOG';
+      if (!card.dataset.secret) card.dataset.secret = 'false';
+      if (card.dataset.secretpw === undefined) card.dataset.secretpw = '';
+      if (card.dataset.images === undefined) card.dataset.images = '';
       if (card.querySelector('.post-content')) return; // 이미 정상 구조
       const dateEl = card.querySelector('.post-date');
       const titleEl = card.querySelector('h3');
+      const metaEl = card.querySelector('.post-card-meta');
       const contentDiv = document.createElement('div');
       contentDiv.className = 'post-content';
       contentDiv.contentEditable = 'true';
       contentDiv.spellcheck = false;
       Array.from(card.children).forEach((el) => {
-        if (el === dateEl || el === titleEl || el === toolsEl) return;
+        if (el === dateEl || el === titleEl || el === toolsEl || el === metaEl) return;
         contentDiv.innerHTML += el.innerHTML + '<br>';
         el.remove();
       });
       card.appendChild(contentDiv);
     });
   }
+
+  /* ============================================================
+     PROFILE 탭 (좌/우 2인, 섹션 재배열, 정보표, 태그)
+     ============================================================ */
+  const profileCardsEl = document.getElementById('profileCards');
+
+  profileCardsEl.addEventListener('click', (e) => {
+    const upBtn = e.target.closest('.sec-up');
+    const downBtn = e.target.closest('.sec-down');
+    if (upBtn || downBtn) {
+      const section = e.target.closest('.p-section');
+      const parent = section.parentElement;
+      if (upBtn) {
+        const prev = section.previousElementSibling;
+        if (prev) parent.insertBefore(section, prev);
+      } else {
+        const next = section.nextElementSibling;
+        if (next) parent.insertBefore(next, section);
+      }
+      scheduleAutoSave();
+      return;
+    }
+    const rowDel = e.target.closest('.profile-info-row-del');
+    if (rowDel) {
+      rowDel.closest('tr').remove();
+      scheduleAutoSave();
+      return;
+    }
+    const addRow = e.target.closest('.profile-add-row-btn');
+    if (addRow) {
+      const tbody = document.querySelector(`tbody[data-info-side="${addRow.dataset.side}"]`);
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td class="label" contenteditable="true" spellcheck="false">라벨</td><td contenteditable="true" spellcheck="false">값</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td>';
+      tbody.appendChild(tr);
+      scheduleAutoSave();
+      return;
+    }
+    const addTag = e.target.closest('.profile-add-tag-btn');
+    if (addTag) {
+      const text = prompt('태그 내용을 입력하세요');
+      if (text && text.trim()) {
+        const container = document.querySelector(`.profile-tags[data-tags-side="${addTag.dataset.side}"][data-tags-kind="${addTag.dataset.kind}"]`);
+        const span = document.createElement('span');
+        span.className = 'profile-tag';
+        span.innerHTML = esc(text.trim()) + '<button type="button" title="삭제">✕</button>';
+        container.appendChild(span);
+        scheduleAutoSave();
+      }
+      return;
+    }
+    const tagDelBtn = e.target.closest('.profile-tag button');
+    if (tagDelBtn) {
+      tagDelBtn.closest('.profile-tag').remove();
+      scheduleAutoSave();
+    }
+  });
+
+  document.querySelectorAll('.profile-color-input').forEach((input) => {
+    input.addEventListener('input', () => {
+      const card = document.getElementById('profileCard-' + input.dataset.side);
+      if (card) card.style.background = input.value;
+      scheduleAutoSave();
+    });
+  });
+
+  /* ============================================================
+     탭 이름 더블클릭 편집 (관리자)
+     ============================================================ */
+  document.querySelectorAll('.tab[data-default-label]').forEach((tabBtn) => {
+    tabBtn.addEventListener('dblclick', () => {
+      if (!isAdmin()) return;
+      const name = prompt('탭 이름 변경', tabBtn.textContent.trim());
+      if (name && name.trim()) {
+        tabBtn.textContent = name.trim();
+        scheduleAutoSave();
+      }
+    });
+  });
+
+  /* ============================================================
+     D-day (stamp-note 옆, 박스 없이 텍스트로만 표시)
+     ============================================================ */
+  const ddayText = document.getElementById('ddayText');
+  let siteSettings = { title: '', desc: '', ddayDate: '', ddayLabel: '함께한 지', bgImage: '', bgBlur: 0 };
+
+  function renderDday() {
+    const base = siteSettings.ddayDate ? new Date(siteSettings.ddayDate + 'T00:00:00') : null;
+    if (!base || isNaN(base.getTime())) {
+      ddayText.classList.remove('filled');
+      ddayText.textContent = '';
+      return;
+    }
+    const today = new Date();
+    const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const baseMid = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+    const diffDays = Math.round((todayMid - baseMid) / 86400000);
+    const label = siteSettings.ddayLabel || '함께한 지';
+    ddayText.classList.add('filled');
+    ddayText.textContent = `${label} D${diffDays >= 0 ? '+' : ''}${diffDays}`;
+  }
+
+  function applyBackgroundSettings() {
+    if (siteSettings.bgImage) {
+      document.body.style.backgroundImage = `url("${siteSettings.bgImage}")`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+    } else {
+      document.body.style.backgroundImage = '';
+    }
+    document.body.style.filter = siteSettings.bgBlur ? '' : '';
+    let overlay = document.getElementById('bgBlurOverlay');
+    if (siteSettings.bgImage && siteSettings.bgBlur > 0) {
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'bgBlurOverlay';
+        overlay.style.cssText = 'position:fixed; inset:0; z-index:-1; pointer-events:none; backdrop-filter:blur(' + siteSettings.bgBlur + 'px);';
+        document.body.appendChild(overlay);
+      } else {
+        overlay.style.backdropFilter = 'blur(' + siteSettings.bgBlur + 'px)';
+      }
+    } else if (overlay) {
+      overlay.remove();
+    }
+    if (siteSettings.title) document.title = siteSettings.title;
+  }
+
+  /* ---- 설정 모달 ---- */
+  const settingsModalBackdrop = document.getElementById('settingsModalBackdrop');
+  const settingSiteTitle = document.getElementById('settingSiteTitle');
+  const settingSiteDesc = document.getElementById('settingSiteDesc');
+  const settingDdayDate = document.getElementById('settingDdayDate');
+  const settingDdayLabel = document.getElementById('settingDdayLabel');
+  const settingBgImage = document.getElementById('settingBgImage');
+  const settingBgBlur = document.getElementById('settingBgBlur');
+  const settingBgBlurVal = document.getElementById('settingBgBlurVal');
+  const settingNewPassword = document.getElementById('settingNewPassword');
+  const settingsError = document.getElementById('settingsError');
+
+  settingBgBlur.addEventListener('input', () => { settingBgBlurVal.textContent = settingBgBlur.value; });
+
+  document.getElementById('siteSettingsBtn').addEventListener('click', () => {
+    settingSiteTitle.value = siteSettings.title || '';
+    settingSiteDesc.value = siteSettings.desc || '';
+    settingDdayDate.value = siteSettings.ddayDate || '';
+    settingDdayLabel.value = siteSettings.ddayLabel || '';
+    settingBgImage.value = siteSettings.bgImage || '';
+    settingBgBlur.value = siteSettings.bgBlur || 0;
+    settingBgBlurVal.textContent = settingBgBlur.value;
+    settingNewPassword.value = '';
+    settingsError.textContent = '';
+    settingsModalBackdrop.classList.add('visible');
+  });
+  document.getElementById('settingsCancel').addEventListener('click', () => settingsModalBackdrop.classList.remove('visible'));
+  settingsModalBackdrop.addEventListener('click', (e) => { if (e.target === settingsModalBackdrop) settingsModalBackdrop.classList.remove('visible'); });
+  document.getElementById('settingsSave').addEventListener('click', () => {
+    siteSettings.title = settingSiteTitle.value.trim();
+    siteSettings.desc = settingSiteDesc.value.trim();
+    siteSettings.ddayDate = settingDdayDate.value.trim();
+    siteSettings.ddayLabel = settingDdayLabel.value.trim();
+    siteSettings.bgImage = settingBgImage.value.trim();
+    siteSettings.bgBlur = Number(settingBgBlur.value) || 0;
+    if (settingNewPassword.value.trim()) {
+      ADMIN_CODE = settingNewPassword.value.trim();
+      localStorage.setItem(LS_ADMIN_CODE, ADMIN_CODE);
+      siteSettings.adminCode = ADMIN_CODE;
+    }
+    renderDday();
+    applyBackgroundSettings();
+    settingsModalBackdrop.classList.remove('visible');
+    showToast('설정이 저장되었어요');
+    scheduleAutoSave();
+  });
+
+  renderDday();
+  applyBackgroundSettings();
 
   /* ---- 데이터 직렬화 / 적용 ---- */
   function serializeSiteData() {
@@ -2095,11 +3139,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('#postList .post-card').forEach((card) => {
       data.posts.push({
+        id: card.dataset.id,
+        category: card.dataset.category || '',
+        type: card.dataset.type || 'LOG',
+        secret: card.dataset.secret === 'true',
+        secretpw: card.dataset.secretpw || '',
+        images: card.dataset.images || '',
         date: card.querySelector('.post-date').innerHTML,
         title: card.querySelector('h3').innerHTML,
         content: card.querySelector('.post-content').innerHTML,
+        comments: postComments[card.dataset.id] || [],
       });
     });
+    data.categories = logCategories;
 
     document.querySelectorAll('#galleryGrid .gallery-item').forEach((item) => {
       const img = item.querySelector('img.editable-img');
@@ -2112,6 +3164,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     data.memos = memos;
+
+    // PROFILE: 섹션 순서 / 정보표 / 태그 / 카드 색상
+    data.profile = { order: {}, info: {}, tags: {}, color: {} };
+    ['left', 'right'].forEach((side) => {
+      const card = document.getElementById('profileCard-' + side);
+      if (!card) return;
+      data.profile.order[side] = Array.from(card.querySelectorAll(':scope > .p-section')).map((s) => s.dataset.section);
+      const tbody = card.querySelector(`tbody[data-info-side="${side}"]`);
+      data.profile.info[side] = tbody ? Array.from(tbody.querySelectorAll('tr')).map((tr) => ({
+        label: tr.children[0].innerHTML,
+        value: tr.children[1].innerHTML,
+      })) : [];
+      data.profile.tags[side] = {};
+      ['likes', 'dislikes'].forEach((kind) => {
+        const container = card.querySelector(`.profile-tags[data-tags-kind="${kind}"]`);
+        data.profile.tags[side][kind] = container ? Array.from(container.querySelectorAll('.profile-tag')).map((t) => t.firstChild ? t.firstChild.textContent : '') : [];
+      });
+      data.profile.color[side] = card.style.background || '';
+    });
+
+    // 탭 이름
+    data.tabNames = {};
+    document.querySelectorAll('.tab[data-default-label]').forEach((t) => { data.tabNames[t.dataset.target] = t.textContent.trim(); });
+
+    // 사이트 설정
+    data.settings = Object.assign({}, siteSettings);
 
     return data;
   }
@@ -2141,22 +3219,29 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    if (Array.isArray(data.categories)) logCategories = data.categories;
+
     if (Array.isArray(data.posts)) {
       postList.innerHTML = '';
+      postComments = {};
       data.posts.forEach((p) => {
+        const id = p.id || genId('p');
         const article = document.createElement('article');
         article.className = 'post-card';
-        article.innerHTML = `
-          <div class="post-card-tools">
-            <button type="button" class="post-edit" title="수정">✎</button>
-            <button type="button" class="post-delete" title="삭제">✕</button>
-          </div>
-          <p class="post-date" contenteditable="true" spellcheck="false">${p.date}</p>
-          <h3 contenteditable="true" spellcheck="false">${p.title}</h3>
-          <div class="post-content" contenteditable="true" spellcheck="false">${p.content}</div>
-        `;
+        article.dataset.id = id;
+        article.dataset.category = p.category || '';
+        article.dataset.type = p.type || 'LOG';
+        article.dataset.secret = p.secret ? 'true' : 'false';
+        article.dataset.secretpw = p.secretpw || '';
+        article.dataset.images = p.images || '';
+        article.innerHTML = makePostCardHtml(p.date, p.title, p.content);
+        const badgeEl = article.querySelector('.post-type-badge');
+        if (badgeEl) badgeEl.textContent = postTypeBadgeText(p.type);
         postList.appendChild(article);
+        if (Array.isArray(p.comments) && p.comments.length) postComments[id] = p.comments;
       });
+      renderLogCategories();
+      applyLogFilter();
     }
 
     if (Array.isArray(data.gallery)) {
@@ -2168,7 +3253,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="gallery-photo img-frame">
             <img class="editable-img" draggable="false" src="${g.src}" alt="갤러리 이미지">
             <div class="img-hint img-hint-move">✋</div>
-            <div class="img-hint img-hint-edit">클릭하여 변경</div>
+            <div class="img-hint img-hint-edit">드래그: 위치 · 휠: 크기</div>
+            <button type="button" class="gallery-edit-btn" title="이미지 변경">✎</button>
           </div>
           <p class="gallery-caption" contenteditable="true" spellcheck="false" data-placeholder="설명을 적어보세요 (선택)">${g.caption || ''}</p>
         `;
@@ -2185,6 +3271,56 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Array.isArray(data.memos)) {
       memos = data.memos;
       renderMemos();
+    }
+
+    if (data.profile) {
+      ['left', 'right'].forEach((side) => {
+        const card = document.getElementById('profileCard-' + side);
+        if (!card) return;
+        // 섹션 순서
+        if (data.profile.order && data.profile.order[side]) {
+          data.profile.order[side].forEach((key) => {
+            const sec = card.querySelector(`:scope > .p-section[data-section="${key}"]`);
+            if (sec) card.appendChild(sec);
+          });
+        }
+        // 정보표
+        const tbody = card.querySelector(`tbody[data-info-side="${side}"]`);
+        if (tbody && data.profile.info && Array.isArray(data.profile.info[side])) {
+          tbody.innerHTML = data.profile.info[side].map((row) =>
+            `<tr><td class="label" contenteditable="true" spellcheck="false">${row.label}</td><td contenteditable="true" spellcheck="false">${row.value}</td><td><button type="button" class="profile-info-row-del" title="삭제">✕</button></td></tr>`
+          ).join('');
+        }
+        // 태그
+        if (data.profile.tags && data.profile.tags[side]) {
+          ['likes', 'dislikes'].forEach((kind) => {
+            const container = card.querySelector(`.profile-tags[data-tags-kind="${kind}"]`);
+            const list = data.profile.tags[side][kind] || [];
+            if (container) {
+              container.innerHTML = list.map((t) => `<span class="profile-tag">${esc(t)}<button type="button" title="삭제">✕</button></span>`).join('');
+            }
+          });
+        }
+        // 카드 색상
+        if (data.profile.color && data.profile.color[side]) {
+          card.style.background = data.profile.color[side];
+          const colorInput = card.querySelector('.profile-color-input');
+          if (colorInput) colorInput.value = data.profile.color[side];
+        }
+      });
+    }
+
+    if (data.tabNames) {
+      document.querySelectorAll('.tab[data-default-label]').forEach((t) => {
+        if (data.tabNames[t.dataset.target]) t.textContent = data.tabNames[t.dataset.target];
+      });
+    }
+
+    if (data.settings) {
+      siteSettings = Object.assign(siteSettings, data.settings);
+      if (siteSettings.adminCode) { ADMIN_CODE = siteSettings.adminCode; }
+      renderDday();
+      applyBackgroundSettings();
     }
 
     // 관리자 모드에서만 contenteditable이 살아있어야 하므로 다시 맞춰줌
@@ -2269,6 +3405,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.isContentEditable) scheduleAutoSave();
   });
 
+  /* ---- 공유 링크로 접속 시 자동으로 해당 글 열기 ---- */
+  function openSharedPostFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get('post');
+    if (!postId) return;
+    const card = postList.querySelector(`.post-card[data-id="${postId}"]`);
+    if (!card) return;
+    // 해당 글이 속한 탭으로 전환
+    document.querySelector('.tab[data-target="post"]').click();
+    if (card.dataset.secret === 'true') {
+      openSecretPostModal(card);
+    } else {
+      openPostDetail(card);
+    }
+  }
+
   /* ---- 초기화 ---- */
   (async function initAdminAndSync() {
     repairPostCards(); // 현재 화면에 남아있는 깨진 글부터 먼저 복구
@@ -2279,6 +3431,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // 이 브라우저에서 이미 로그인한 상태였다면 관리자 모드 복원
     setAdminMode(localStorage.getItem(LS_ADMIN) === 'true');
+    openSharedPostFromUrl();
   })();
 });
 </script>
