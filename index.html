@@ -50,6 +50,37 @@
   ::-webkit-scrollbar-track{background:var(--pink-soft); border-left:2px solid var(--ink);}
   ::-webkit-scrollbar-thumb{background:var(--pink); border:2px solid var(--ink);}
 
+  /* ---------- content protection (non-admin): block right-click / long-press save ---------- */
+  body:not(.admin-mode){
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
+  body:not(.admin-mode) input,
+  body:not(.admin-mode) textarea{
+    -webkit-user-select:text; -moz-user-select:text; user-select:text;
+  }
+  body:not(.admin-mode) img{
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-user-drag:none;
+    user-drag:none;
+    pointer-events:auto;
+  }
+
+  /* ---------- fixed-size scroll boxes (LOG / GALLERY / MEMO): hidden scrollbar ---------- */
+  .panel-scroll{
+    height:440px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:none;      /* firefox */
+    -ms-overflow-style:none;   /* IE/Edge */
+  }
+  .panel-scroll::-webkit-scrollbar{width:0; height:0; display:none;} /* chrome/safari */
+
   /* ---------- admin-only visibility ---------- */
   .admin-only{display:none !important;}
   body.admin-mode .admin-only{display:flex !important;}
@@ -1564,7 +1595,7 @@
         '</div>' +
       '</div>' +
       '<div class="log-cat-tabs" id="logCatTabs"></div>' +
-      '<div id="logPostList"></div>';
+      '<div id="logPostList" class="panel-scroll"></div>';
 
     document.getElementById("logSearchInput").addEventListener("input", (e) => {
       logSearchTerm = e.target.value;
@@ -1697,7 +1728,7 @@
     body.appendChild(addRow);
 
     const grid = document.createElement("div");
-    grid.className = "memo-grid";
+    grid.className = "memo-grid panel-scroll";
     if(state.memo.length === 0){
       body.insertAdjacentHTML("beforeend", '<div class="empty-msg">아직 메모가 없어요.</div>');
     }
@@ -1727,7 +1758,7 @@
     body.appendChild(addRow);
 
     const grid = document.createElement("div");
-    grid.className = "gallery-grid";
+    grid.className = "gallery-grid panel-scroll";
     if(state.gallery.length === 0){
       body.insertAdjacentHTML("beforeend", '<div class="empty-msg">아직 이미지가 없어요.</div>');
     }
@@ -2061,6 +2092,14 @@
     () => state.nowPlaying.cover,
     (d) => { state.nowPlaying.cover = d; }
   );
+
+  /* ---------------- content protection: no right-click / no drag-save for non-admin ---------------- */
+  document.addEventListener("contextmenu", (e) => {
+    if(!isAdmin()) e.preventDefault();
+  });
+  document.addEventListener("dragstart", (e) => {
+    if(!isAdmin() && e.target && e.target.tagName === "IMG") e.preventDefault();
+  });
 
   setAdmin(isAdmin());
   tickClock();
