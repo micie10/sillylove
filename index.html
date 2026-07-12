@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUSH X BELVEDERE</title>
+<title>♡ PAIR's ROOM ♡ — 개인 백업 홈페이지</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%23E3B1BC%22/><rect x=%223%22 y=%223%22 width=%223%22 height=%223%22 fill=%22%23111%22/><rect x=%2210%22 y=%223%22 width=%223%22 height=%223%22 fill=%22%23111%22/></svg>">
@@ -178,29 +178,82 @@
 
   /* ---------- memo board ---------- */
   .memo-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px;}
-  .memo-card{border:2px solid var(--ink); padding:10px; font-size:12px; position:relative; min-height:90px; box-shadow:3px 3px 0 var(--ink);}
+  .memo-card{border:2px solid var(--ink); padding:10px; font-size:12px; position:relative; min-height:90px; box-shadow:3px 3px 0 var(--ink); display:flex; flex-direction:column;}
   .memo-card.pink{background:var(--pink);}
   .memo-card.paper{background:#fff;}
   .memo-card.mint{background:#cfe8dd;}
   .memo-card.lav{background:#e2d7ee;}
+  .memo-card.peach{background:#f6d3ab;}
+  .memo-text{flex:1;}
+  .memo-date{font-size:9px; color:var(--ink-soft); margin-top:8px; padding-top:6px; border-top:1px dashed rgba(33,28,30,.3);}
   .memo-actions{position:absolute; top:6px; right:6px; display:flex; gap:4px;}
 
   /* ---------- gallery ---------- */
   .gallery-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
   @media (max-width:600px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
-  .gallery-item{aspect-ratio:1/1; border:2px solid var(--ink); position:relative; overflow:hidden; background:var(--pink-soft); display:flex; align-items:center; justify-content:center;}
+  .gallery-item{aspect-ratio:1/1; border:2px solid var(--ink); position:relative; overflow:hidden; background:var(--pink-soft); display:flex; align-items:center; justify-content:center; cursor:pointer;}
   .gallery-item img{width:100%; height:100%; object-fit:cover;}
   .gallery-item .placeholder{font-size:22px;}
   .gallery-cap{position:absolute; left:0; right:0; bottom:0; background:rgba(33,28,30,.75); color:#fff; font-size:9px; padding:3px 5px;}
   .gallery-actions{position:absolute; top:4px; right:4px; display:flex; gap:4px;}
 
-  /* ---------- profile tab (full) ---------- */
-  .profile-full{display:flex; gap:18px; flex-wrap:wrap;}
-  .profile-full .avatar{width:140px; flex-shrink:0;}
-  .profile-full-info{flex:1; min-width:200px;}
-  .profile-full-info h2{margin:0 0 6px; font-size:16px;}
-  .profile-full-info .sub{color:var(--ink-soft); font-size:12px; margin-bottom:10px;}
-  .profile-bio{font-size:12px; white-space:pre-line; color:var(--ink-soft);}
+  /* ---------- PROFILE tab: two character cards ---------- */
+  .profile-cards-wrap{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;}
+  @media (max-width:640px){.profile-cards-wrap{grid-template-columns:1fr;}}
+  .profile-card{border:2px solid var(--ink); box-shadow:3px 3px 0 var(--ink); background:var(--paper);}
+  .profile-card-head{
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom:2px solid var(--ink); padding:9px 10px; font-size:10.5px;
+  }
+  .profile-card-head.pink{background:var(--pink);}
+  .profile-card-head.paper{background:#fff;}
+  .profile-card-head.mint{background:#cfe8dd;}
+  .profile-card-head.lav{background:#e2d7ee;}
+  .profile-card-head.peach{background:#f6d3ab;}
+  .color-swatch-btn{width:20px; height:20px; border:2px solid var(--ink); cursor:pointer;}
+  .color-swatch-btn.pink{background:var(--pink);}
+  .color-swatch-btn.paper{background:#fff;}
+  .color-swatch-btn.mint{background:#cfe8dd;}
+  .color-swatch-btn.lav{background:#e2d7ee;}
+  .color-swatch-btn.peach{background:#f6d3ab;}
+  .profile-card-body{padding:12px;}
+
+  .section-block{border-bottom:2px dashed var(--pink-deep); padding:12px 0;}
+  .section-block:first-child{padding-top:0;}
+  .section-block:last-child{border-bottom:none; padding-bottom:0;}
+  .section-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .section-label{font-size:9.5px; letter-spacing:.5px; color:var(--pink-deep); font-weight:700;}
+  .section-reorder{display:flex; gap:4px;}
+  .section-reorder .mini-btn{padding:2px 6px; font-size:9px;}
+
+  .profile-photo-box{
+    width:100%; aspect-ratio:1/1; border:2px solid var(--ink); position:relative; overflow:hidden;
+    background:repeating-linear-gradient(45deg, var(--pink-soft), var(--pink-soft) 8px, #fff 8px, #fff 16px);
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+  }
+  .quote-block{font-size:12px; font-style:italic; color:var(--ink-soft); border-left:3px solid var(--pink); padding:4px 0 4px 10px; white-space:pre-line;}
+  .text-block{font-size:12px; color:var(--ink-soft); white-space:pre-line; min-height:1.4em;}
+
+  .info-table{--label-w:76px; display:flex; flex-direction:column; gap:4px;}
+  .info-row{display:grid; grid-template-columns:var(--label-w) 8px 1fr auto; align-items:center; gap:0;}
+  .info-label{font-size:11px; font-weight:700; padding:5px 6px; background:var(--pink-soft); overflow:hidden;}
+  .info-value{font-size:11px; padding:5px 6px; background:#fff; overflow-wrap:anywhere;}
+  .info-label[contenteditable="true"], .info-value[contenteditable="true"]{outline:1px dashed var(--pink-deep); outline-offset:-1px;}
+  .info-resizer-handle{width:8px; height:100%; min-height:24px; cursor:col-resize; background:var(--ink); opacity:.15;}
+  .info-resizer-handle:hover{opacity:.6;}
+  .info-row-del{margin-left:4px;}
+
+  .tags-wrap{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;}
+  .tag-chip{border:1.5px solid var(--ink); background:var(--pink-soft); font-size:10.5px; padding:4px 8px; display:inline-flex; align-items:center; gap:5px;}
+  .tag-remove{border:none; background:none; cursor:pointer; font-size:9px; color:var(--ink-soft); padding:0;}
+  .tag-remove:hover{color:var(--err);}
+  .tag-add-row{display:flex; gap:6px;}
+  .tag-add-input{flex:1; border:2px solid var(--ink); padding:6px 8px; font-size:11px; font-family:'Noto Sans KR', sans-serif; background:#fff;}
+
+  /* ---------- gallery lightbox ---------- */
+  .lightbox-body{text-align:center;}
+  .lightbox-img{max-width:100%; max-height:70vh; border:2px solid var(--ink);}
+  .lightbox-caption{margin-top:10px; font-size:12px; color:var(--ink-soft);}
 
   .now-playing{display:flex; gap:10px; align-items:center;}
   .np-cover{width:52px; height:52px; border:2px solid var(--ink); background:repeating-conic-gradient(var(--pink) 0% 25%, var(--pink-soft) 0% 50%); background-size:10px 10px; flex-shrink:0; position:relative; overflow:hidden; font-size:20px;}
@@ -260,6 +313,7 @@
   .color-pick.paper{background:#fff;}
   .color-pick.mint{background:#cfe8dd;}
   .color-pick.lav{background:#e2d7ee;}
+  .color-pick.peach{background:#f6d3ab;}
   .color-pick.selected{outline:2px solid var(--ink); outline-offset:2px;}
   .modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:6px;}
   .btn{border:2px solid var(--ink); background:var(--paper); padding:8px 14px; font-size:11px; box-shadow:2px 2px 0 var(--ink);}
@@ -377,7 +431,10 @@
 
     <div class="col-left">
       <div class="box">
-        <div class="box-head"><div class="box-head-left pixel">PROFILE</div></div>
+        <div class="box-head">
+          <div class="box-head-left pixel">PROFILE</div>
+          <button class="mini-btn admin-only inline" id="editMiniProfile">편집</button>
+        </div>
         <div class="box-body">
           <div class="avatar cover-edit" id="miniAvatarBox">
             <span class="cover-placeholder" id="miniAvatarPlaceholder">🐰</span>
@@ -469,6 +526,34 @@
 
   const uid = () => "id_" + Math.random().toString(36).slice(2, 10);
 
+  const PROFILE_TEXT_SECTIONS = [
+    { key: "appearance", label: "외모" },
+    { key: "personality", label: "성격" },
+    { key: "ability", label: "능력" },
+    { key: "backstory", label: "서사" }
+  ];
+  const PROFILE_TAG_SECTIONS = [
+    { key: "likes", label: "좋아하는 것" },
+    { key: "dislikes", label: "싫어하는 것" }
+  ];
+  const CARD_COLORS = ["pink", "paper", "mint", "lav", "peach"];
+
+  function defaultProfileCard(id, color){
+    const sections = [
+      { type: "photo", key: "photo", data: { url: "", zoom: 1, posX: 50, posY: 50 } },
+      { type: "quote", key: "quote", data: { text: "이곳에 명대사를 적어보세요." } },
+      { type: "info", key: "info", data: {
+          rows: [
+            { label: "이름", value: "" }, { label: "나이", value: "" }, { label: "성별", value: "" },
+            { label: "소속", value: "" }, { label: "직책", value: "" }, { label: "키", value: "" }
+          ], labelWidth: 76
+        } }
+    ];
+    PROFILE_TEXT_SECTIONS.forEach(t => sections.push({ type: "text", key: t.key, label: t.label, data: { text: "" } }));
+    PROFILE_TAG_SECTIONS.forEach(t => sections.push({ type: "tags", key: t.key, label: t.label, data: { tags: [] } }));
+    return { id: id, color: color, sections: sections };
+  }
+
   /* ---------------- default data ---------------- */
   function defaultState(){
     return {
@@ -512,13 +597,17 @@
         }
       ],
       memo: [
-        { id: uid(), text: "오늘의 할 일: 사진 정리하기", color: "pink" },
-        { id: uid(), text: "장보기 리스트 작성하기", color: "mint" }
+        { id: uid(), text: "오늘의 할 일: 사진 정리하기", color: "pink", date: "2026-07-12" },
+        { id: uid(), text: "장보기 리스트 작성하기", color: "mint", date: "2026-07-12" }
       ],
       gallery: [
         { id: uid(), url: "", caption: "봄" },
         { id: uid(), url: "", caption: "산책" }
-      ]
+      ],
+      profileCards: {
+        left: defaultProfileCard("left", "pink"),
+        right: defaultProfileCard("right", "mint")
+      }
     };
   }
 
@@ -563,6 +652,9 @@
       type: "LOG", category: (logCategories[0] && logCategories[0].id) || "general",
       images: [], secret: false, password: "", comments: [], bodyHtml: p.body || ""
     }, p));
+    const memo = (parsed.memo || d.memo).map(m => Object.assign({ date: todayStr() }, m));
+    const profileCards = (parsed.profileCards && parsed.profileCards.left && parsed.profileCards.right)
+      ? parsed.profileCards : d.profileCards;
     return {
       meta: Object.assign({}, d.meta, parsed.meta, { tabNames: Object.assign({}, d.meta.tabNames, (parsed.meta && parsed.meta.tabNames) || {}) }),
       profile: profile,
@@ -570,8 +662,9 @@
       home: home,
       logCategories: logCategories,
       log: log,
-      memo: parsed.memo || d.memo,
-      gallery: parsed.gallery || d.gallery
+      memo: memo,
+      gallery: parsed.gallery || d.gallery,
+      profileCards: profileCards
     };
   }
   function saveLocal(){
@@ -1121,12 +1214,11 @@
   function openMemoEditor(entry){
     if(!requireAdmin()) return;
     const isNew = !entry;
-    entry = entry || { id: uid(), text: "", color: "pink" };
-    const colors = ["pink", "paper", "mint", "lav"];
+    entry = entry || { id: uid(), text: "", color: "pink", date: todayStr() };
     openModal(isNew ? "새 MEMO 작성" : "MEMO 편집",
       '<div class="field"><label>내용</label><textarea id="fText">' + esc(entry.text) + '</textarea></div>' +
-      '<div class="field"><label>색상</label><div class="color-picks" id="colorPicks">' +
-        colors.map(c => '<div class="color-pick ' + c + (c === entry.color ? ' selected' : '') + '" data-color="' + c + '"></div>').join("") +
+      '<div class="field"><label>색상 (5가지 중 선택)</label><div class="color-picks" id="colorPicks">' +
+        CARD_COLORS.map(c => '<div class="color-pick ' + c + (c === entry.color ? ' selected' : '') + '" data-color="' + c + '"></div>').join("") +
       '</div></div>' +
       '<div class="modal-actions"><button class="btn" id="fCancel">취소</button><button class="btn primary" id="fSave">저장</button></div>'
     );
@@ -1140,7 +1232,8 @@
     });
     bindSimpleSave("memo", entry, isNew, () => ({
       text: document.getElementById("fText").value.trim() || "(내용 없음)",
-      color: selectedColor
+      color: selectedColor,
+      date: entry.date || todayStr()
     }));
   }
 
@@ -1282,6 +1375,18 @@
     }
   });
 
+  /* ---------------- generic drag-resize engine (info table label width) ---------------- */
+  let activeResize = null;
+  window.addEventListener("mousemove", (e) => {
+    if(!activeResize) return;
+    activeResize.onMove(e.clientX - activeResize.startX);
+  });
+  window.addEventListener("mouseup", () => {
+    if(!activeResize) return;
+    const r = activeResize; activeResize = null;
+    if(r.onEnd) r.onEnd();
+  });
+
   function makeCoverEditor(containerEl, imgEl, placeholderEl, getData, setData){
     function apply(){
       const d = getData();
@@ -1349,20 +1454,6 @@
       apply(); saveLocal(); closeModal();
       showToast("이미지가 저장되었습니다.", "success");
     });
-  }
-
-  function fillStaticCover(el, data, fallbackEmoji){
-    el.innerHTML = "";
-    if(data && data.url){
-      const img = document.createElement("img");
-      img.src = data.url; img.alt = "";
-      img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
-      img.style.objectPosition = data.posX + "% " + data.posY + "%";
-      img.style.transform = "scale(" + data.zoom + ")";
-      el.appendChild(img);
-    }else{
-      el.textContent = fallbackEmoji;
-    }
   }
 
   /* ---------------- render: meta / hero / dday / bg ---------------- */
@@ -1615,7 +1706,8 @@
       const div = document.createElement("div");
       div.className = "memo-card " + (entry.color || "pink");
       div.innerHTML =
-        '<div>' + esc(entry.text) + '</div>' +
+        '<div class="memo-text">' + esc(entry.text) + '</div>' +
+        '<div class="memo-date">' + fmtDate(entry.date) + '</div>' +
         '<div class="memo-actions admin-only">' +
           '<button class="mini-btn editBtn">✎</button>' +
           '<button class="mini-btn danger delBtn">✕</button>' +
@@ -1650,8 +1742,9 @@
           '<button class="mini-btn editBtn">✎</button>' +
           '<button class="mini-btn danger delBtn">✕</button>' +
         '</div>';
-      div.querySelector(".editBtn").addEventListener("click", () => openGalleryEditor(entry));
-      div.querySelector(".delBtn").addEventListener("click", () => deleteEntry("gallery", entry.id));
+      div.addEventListener("click", () => { if(entry.url) openLightbox(entry); });
+      div.querySelector(".editBtn").addEventListener("click", (e) => { e.stopPropagation(); openGalleryEditor(entry); });
+      div.querySelector(".delBtn").addEventListener("click", (e) => { e.stopPropagation(); deleteEntry("gallery", entry.id); });
       grid.appendChild(div);
     });
     body.appendChild(grid);
@@ -1659,26 +1752,245 @@
     if(addBtn) addBtn.addEventListener("click", () => openGalleryEditor());
   }
 
+  function openLightbox(entry){
+    openModal("GALLERY",
+      '<div class="lightbox-body">' +
+        '<img src="' + esc(entry.url) + '" alt="' + esc(entry.caption) + '" class="lightbox-img" />' +
+        (entry.caption ? '<div class="lightbox-caption">' + esc(entry.caption) + '</div>' : '') +
+      '</div>',
+      { wide: true }
+    );
+  }
+
   function renderProfilePanel(body){
-    const p = state.profile;
-    const div = document.createElement("div");
-    div.innerHTML =
-      '<div class="add-row admin-only"><button class="mini-btn" id="editProfile">편집</button></div>' +
-      '<div class="profile-full">' +
-        '<div class="avatar" id="profileFullAvatar"></div>' +
-        '<div class="profile-full-info">' +
-          '<h2 class="pixel" style="font-size:14px;">' + esc(p.name) + '</h2>' +
-          '<div class="sub">' + esc(p.sub) + '</div>' +
-          '<div class="stat-row"><span>Lv.</span><span>' + esc(p.level) + '</span></div>' +
-          '<div class="stat-row"><span>Mood</span><span>' + esc(p.mood) + '</span></div>' +
-          '<div class="stat-row"><span>Since</span><span>' + esc(p.since) + '</span></div>' +
-          '<div class="profile-bio" style="margin-top:12px;">' + esc(p.bio) + '</div>' +
-        '</div>' +
+    body.innerHTML =
+      '<div class="profile-cards-wrap">' +
+        '<div class="profile-card-col" id="profCardCol_left"></div>' +
+        '<div class="profile-card-col" id="profCardCol_right"></div>' +
       '</div>';
-    body.appendChild(div);
-    fillStaticCover(document.getElementById("profileFullAvatar"), p.avatarImage, p.avatar);
-    const editBtn = document.getElementById("editProfile");
-    if(editBtn) editBtn.addEventListener("click", openProfileEditor);
+    renderProfileCard("left");
+    renderProfileCard("right");
+  }
+
+  function renderProfileCard(side){
+    const col = document.getElementById("profCardCol_" + side);
+    if(!col) return;
+    const card = state.profileCards[side];
+    col.innerHTML =
+      '<div class="profile-card">' +
+        '<div class="profile-card-head ' + card.color + '">' +
+          '<span class="pixel">' + (side === "left" ? "CHARACTER A" : "CHARACTER B") + '</span>' +
+          '<button class="color-swatch-btn admin-only inline ' + card.color + '" id="colorBtn_' + side + '" title="클릭하여 카드 색상 변경"></button>' +
+        '</div>' +
+        '<div class="profile-card-body" id="profCardBody_' + side + '"></div>' +
+      '</div>';
+
+    const colorBtn = document.getElementById("colorBtn_" + side);
+    if(colorBtn){
+      colorBtn.addEventListener("click", () => {
+        const idx = CARD_COLORS.indexOf(card.color);
+        card.color = CARD_COLORS[(idx + 1) % CARD_COLORS.length];
+        saveLocal();
+        renderProfileCard(side);
+      });
+    }
+
+    const bodyEl = document.getElementById("profCardBody_" + side);
+    card.sections.forEach((sec, idx) => {
+      bodyEl.appendChild(renderProfileSection(card, side, sec, idx));
+    });
+  }
+
+  function profileSectionLabel(sec){
+    if(sec.type === "photo") return "PHOTO";
+    if(sec.type === "quote") return "QUOTE";
+    if(sec.type === "info") return "INFO";
+    return sec.label || sec.key;
+  }
+
+  function renderProfileSection(card, side, sec, idx){
+    const block = document.createElement("div");
+    block.className = "section-block";
+    const head = document.createElement("div");
+    head.className = "section-head";
+    head.innerHTML =
+      '<span class="section-label">' + esc(profileSectionLabel(sec)) + '</span>' +
+      '<span class="section-reorder admin-only">' +
+        '<button class="mini-btn" data-act="up">▲</button>' +
+        '<button class="mini-btn" data-act="down">▼</button>' +
+      '</span>';
+    head.querySelector('[data-act="up"]').addEventListener("click", () => {
+      if(idx === 0) return;
+      const arr = card.sections;
+      const tmp = arr[idx - 1]; arr[idx - 1] = arr[idx]; arr[idx] = tmp;
+      saveLocal(); renderProfileCard(side);
+    });
+    head.querySelector('[data-act="down"]').addEventListener("click", () => {
+      const arr = card.sections;
+      if(idx === arr.length - 1) return;
+      const tmp = arr[idx + 1]; arr[idx + 1] = arr[idx]; arr[idx] = tmp;
+      saveLocal(); renderProfileCard(side);
+    });
+    block.appendChild(head);
+
+    const content = document.createElement("div");
+    content.className = "section-content";
+    block.appendChild(content);
+
+    if(sec.type === "photo") buildProfilePhotoSection(content, sec);
+    else if(sec.type === "quote") buildProfileQuoteSection(content, sec);
+    else if(sec.type === "info") buildProfileInfoSection(content, sec, side);
+    else if(sec.type === "text") buildProfileTextSection(content, sec);
+    else if(sec.type === "tags") buildProfileTagsSection(content, sec, side);
+
+    return block;
+  }
+
+  function buildProfilePhotoSection(content, sec){
+    const box = document.createElement("div");
+    box.className = "profile-photo-box cover-edit";
+    box.innerHTML =
+      '<span class="cover-placeholder">🖼</span>' +
+      '<img class="cover-img" alt="" />' +
+      '<div class="cover-hint admin-only">🖱 휠 확대·축소 / 드래그 이동 / 클릭 이미지 변경</div>';
+    content.appendChild(box);
+    makeCoverEditor(
+      box, box.querySelector(".cover-img"), box.querySelector(".cover-placeholder"),
+      () => sec.data, (d) => { sec.data = d; }
+    );
+  }
+
+  function buildProfileQuoteSection(content, sec){
+    const q = document.createElement("div");
+    q.className = "quote-block";
+    q.textContent = sec.data.text || "이곳에 명대사를 적어보세요.";
+    content.appendChild(q);
+    const hint = document.createElement("div");
+    hint.className = "edit-hint admin-only";
+    hint.textContent = "✎ 더블클릭하여 수정";
+    content.appendChild(hint);
+    setupInlineTextEdit(q, (val) => { sec.data.text = val; saveLocal(); });
+  }
+
+  function buildProfileTextSection(content, sec){
+    const t = document.createElement("div");
+    t.className = "text-block";
+    t.textContent = sec.data.text || "";
+    content.appendChild(t);
+    const hint = document.createElement("div");
+    hint.className = "edit-hint admin-only";
+    hint.textContent = "✎ 더블클릭하여 수정";
+    content.appendChild(hint);
+    setupInlineTextEdit(t, (val) => { sec.data.text = val; saveLocal(); });
+  }
+
+  function buildProfileInfoSection(content, sec, side){
+    const wrap = document.createElement("div");
+    wrap.className = "info-table";
+    wrap.style.setProperty("--label-w", (sec.data.labelWidth || 76) + "px");
+
+    sec.data.rows.forEach((row, rIdx) => {
+      const rEl = document.createElement("div");
+      rEl.className = "info-row";
+
+      const labelEl = document.createElement("div");
+      labelEl.className = "info-label";
+      labelEl.textContent = row.label;
+      labelEl.contentEditable = isAdmin() ? "true" : "false";
+      labelEl.addEventListener("blur", () => { row.label = labelEl.textContent.trim(); saveLocal(); });
+
+      const handle = document.createElement("div");
+      handle.className = "info-resizer-handle admin-only";
+      handle.addEventListener("mousedown", (e) => {
+        if(!isAdmin()) return;
+        e.preventDefault();
+        const startWidth = parseInt(wrap.style.getPropertyValue("--label-w")) || 76;
+        activeResize = {
+          startX: e.clientX,
+          onMove: (dx) => {
+            const w = Math.max(50, Math.min(220, startWidth + dx));
+            wrap.style.setProperty("--label-w", w + "px");
+          },
+          onEnd: () => {
+            sec.data.labelWidth = parseInt(wrap.style.getPropertyValue("--label-w"));
+            saveLocal();
+          }
+        };
+      });
+
+      const valueEl = document.createElement("div");
+      valueEl.className = "info-value";
+      valueEl.textContent = row.value;
+      valueEl.contentEditable = isAdmin() ? "true" : "false";
+      valueEl.addEventListener("blur", () => { row.value = valueEl.textContent.trim(); saveLocal(); });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "mini-btn danger admin-only inline info-row-del";
+      delBtn.textContent = "✕";
+      delBtn.addEventListener("click", () => {
+        sec.data.rows.splice(rIdx, 1);
+        saveLocal();
+        renderProfileCard(side);
+      });
+
+      rEl.appendChild(labelEl); rEl.appendChild(handle); rEl.appendChild(valueEl); rEl.appendChild(delBtn);
+      wrap.appendChild(rEl);
+    });
+    content.appendChild(wrap);
+
+    const addRowBtn = document.createElement("button");
+    addRowBtn.className = "mini-btn admin-only";
+    addRowBtn.style.marginTop = "8px";
+    addRowBtn.textContent = "+ 행 추가";
+    addRowBtn.addEventListener("click", () => {
+      sec.data.rows.push({ label: "새 항목", value: "" });
+      saveLocal();
+      renderProfileCard(side);
+    });
+    content.appendChild(addRowBtn);
+  }
+
+  function buildProfileTagsSection(content, sec, side){
+    sec.data.tags = sec.data.tags || [];
+    const wrap = document.createElement("div");
+    wrap.className = "tags-wrap";
+    sec.data.tags.forEach((tag, tIdx) => {
+      const chip = document.createElement("span");
+      chip.className = "tag-chip";
+      chip.innerHTML = esc(tag) + ' <button type="button" class="tag-remove admin-only inline" data-idx="' + tIdx + '">✕</button>';
+      const rmBtn = chip.querySelector(".tag-remove");
+      if(rmBtn){
+        rmBtn.addEventListener("click", () => {
+          sec.data.tags.splice(tIdx, 1);
+          saveLocal();
+          renderProfileCard(side);
+        });
+      }
+      wrap.appendChild(chip);
+    });
+    if(sec.data.tags.length === 0){
+      const empty = document.createElement("span");
+      empty.className = "empty-msg";
+      empty.style.padding = "0";
+      empty.textContent = "아직 없어요.";
+      wrap.appendChild(empty);
+    }
+    content.appendChild(wrap);
+
+    const addRow = document.createElement("div");
+    addRow.className = "tag-add-row admin-only";
+    addRow.innerHTML = '<input type="text" class="tag-add-input" placeholder="추가할 태그" /><button type="button" class="mini-btn">추가</button>';
+    content.appendChild(addRow);
+    const input = addRow.querySelector("input");
+    const addTag = () => {
+      const val = input.value.trim();
+      if(!val) return;
+      sec.data.tags.push(val);
+      saveLocal();
+      renderProfileCard(side);
+    };
+    addRow.querySelector("button").addEventListener("click", addTag);
+    input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); addTag(); } });
   }
 
   /* ---------------- calendar ---------------- */
@@ -1734,6 +2046,7 @@
   });
   document.getElementById("settingsFab").addEventListener("click", openSettingsModal);
   document.getElementById("editNowPlaying").addEventListener("click", openNowPlayingEditor);
+  document.getElementById("editMiniProfile").addEventListener("click", openProfileEditor);
 
   applyMiniAvatarCover = makeCoverEditor(
     document.getElementById("miniAvatarBox"),
