@@ -1811,7 +1811,7 @@
     col.innerHTML =
       '<div class="profile-card">' +
         '<div class="profile-card-head" style="background:' + esc(hex) + ';">' +
-          '<span class="pixel">' + (side === "left" ? "BELVEDERE" : "RUSH") + '</span>' +
+          '<span class="pixel">' + (side === "left" ? "CHARACTER A" : "CHARACTER B") + '</span>' +
           '<button class="color-swatch-btn admin-only inline" id="colorBtn_' + side + '" style="background:' + esc(hex) + ';" title="클릭하여 카드 색상 자유롭게 선택">' +
             '<input type="color" id="colorInput_' + side + '" value="' + esc(hex) + '" />' +
           '</button>' +
@@ -1839,8 +1839,8 @@
   }
 
   function profileSectionLabel(sec){
-    if(sec.type === "photo") return "PHOTO";
-    if(sec.type === "quote") return "QUOTE";
+    if(sec.type === "photo") return "";
+    if(sec.type === "quote") return "";
     if(sec.type === "info") return "INFO";
     return sec.label || sec.key;
   }
