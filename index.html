@@ -852,7 +852,7 @@
     });
 
     document.getElementById("gistPush").addEventListener("click", pushToGist);
-    document.getElementById("gistPull").addEventListener("click", pullFromGist);
+    document.getElementById("gistPull").addEventListener("click", () => pullFromGist());
   }
 
   /* ---------------- gist sync ---------------- */
